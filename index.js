@@ -18,5 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	getCurrentTabUrl(function(url) {
 		var content = document.getElementById('content');
 		content.innerHTML = "Your current active tab url is: " + url;
+		chrome.runtime.sendMessage(url);
 	});
 });
