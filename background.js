@@ -4,7 +4,6 @@ const makeTimer = function() {
 	return {
 		start: function() {
 			timerObj = setInterval(function() {
-				console.log(seconds);
 				seconds++;
 			}, 1000);
 		},
@@ -25,9 +24,10 @@ let seconds = 0;
 function getCurrentTabUrl(callback) {
 	const queryInfo = {
 		active: true,
-		currentWindow: true
+		//currentWindow: true
 	};
 	chrome.tabs.query(queryInfo, function(tabs) {
+		// tabs[0] will always be the current tab on current window
 		const tab = tabs[0];
 		const url = tab.url;
 		console.assert(typeof url == 'string', 'tab.url should be a string');
@@ -37,7 +37,7 @@ function getCurrentTabUrl(callback) {
 
 // cuts off the http(s):// part from the url
 function parseUrl(url) {
-	var httpPart = url.substr(0, 5);
+	const httpPart = url.substr(0, 5);
 	
 	// starts with http
 	if (httpPart.indexOf('s') === -1) {
@@ -62,14 +62,9 @@ chrome.tabs.onActivated.addListener(function(info) {
 		const parsedUrl = parseUrl(url);
 		console.log(currUrl, parsedUrl);
 		if (!currUrl || currUrl !== parsedUrl) {
-			currUrl = parsedUrl;
 			updateStats(currUrl, seconds);
+			currUrl = parsedUrl;
 			timer.reset();
-			// if (stats.indexOf(parsedUrl) === -1) {
-			// 	updateStats(parsedUrl, seconds);
-			// 	currUrl = parsedUrl;
-			// 	timer.reset();
-			// }
 			console.log(stats);
 		}
 	});
@@ -77,15 +72,9 @@ chrome.tabs.onActivated.addListener(function(info) {
 
 // start timer in the beginning
 document.addEventListener('DOMContentLoaded', function() {
-	
 	timer = makeTimer();
-	
 	getCurrentTabUrl(function(url) {
-		console.log('current tab: ' + url);
+		currUrl = parseUrl(url);
 	});
-	// startTimer();
-});
-
-chrome.runtime.onConnect.addListener(function() {
-	console.log('what up boi');
+	timer.start();
 });
