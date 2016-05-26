@@ -1,5 +1,6 @@
-const makeTimer = function() {
+const initTimer = function() {
 	let timerObj = {};
+	let seconds = 0;
 
 	return {
 		start: function() {
@@ -12,6 +13,10 @@ const makeTimer = function() {
 			clearInterval(timerObj);
 			seconds = 0;
 			this.start();
+		},
+
+		getSeconds: function() {
+			return seconds;
 		}
 	}
 };
@@ -19,7 +24,6 @@ const makeTimer = function() {
 let currUrl = '';
 let stats = [];
 let timer = {};
-let seconds = 0;
 
 function getCurrentTabUrl(callback) {
 	const queryInfo = {
@@ -48,6 +52,10 @@ function parseUrl(url) {
 	return url.substr(8).split('/')[0];
 }
 
+function getStats() {
+
+}
+
 function updateStats(url, seconds) {
 	if (!stats[url]) {
 		stats[url] = seconds;	
@@ -56,15 +64,21 @@ function updateStats(url, seconds) {
 	}
 }
 
+function saveStats(url, seconds) {
+	localStorage[url] += seconds;
+}
+
 // reset timer on tab change
 chrome.tabs.onActivated.addListener(function(info) {
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
-		console.log(currUrl, parsedUrl);
+		
 		if (!currUrl || currUrl !== parsedUrl) {
-			updateStats(currUrl, seconds);
+			updateStats(currUrl, timer.getSeconds());
+			saveStats(currUrl, timer.getSeconds());
 			currUrl = parsedUrl;
 			timer.reset();
+			
 			console.log(stats);
 		}
 	});
@@ -72,7 +86,7 @@ chrome.tabs.onActivated.addListener(function(info) {
 
 // start timer in the beginning
 document.addEventListener('DOMContentLoaded', function() {
-	timer = makeTimer();
+	timer = initTimer();
 	getCurrentTabUrl(function(url) {
 		currUrl = parseUrl(url);
 	});
