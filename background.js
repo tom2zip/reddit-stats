@@ -22,7 +22,6 @@ const initTimer = function() {
 };
 
 let currUrl = '';
-let stats = [];
 let timer = {};
 
 function getCurrentTabUrl(callback) {
@@ -52,34 +51,27 @@ function parseUrl(url) {
 	return url.substr(8).split('/')[0];
 }
 
-function getStats() {
+function getStats(url) {
 
 }
 
-function updateStats(url, seconds) {
-	if (!stats[url]) {
-		stats[url] = seconds;	
+function setStats(url, seconds) {
+	if (!localStorage.getItem(url)) {
+		localStorage.setItem(url, seconds);
 	} else {
-		stats[url] += seconds;
+		const localStorageNumValue = parseInt(localStorage.getItem(url));
+		localStorage.setItem(url, localStorageNumValue + seconds);
 	}
-}
-
-function saveStats(url, seconds) {
-	localStorage[url] += seconds;
 }
 
 // reset timer on tab change
 chrome.tabs.onActivated.addListener(function(info) {
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
-		
 		if (!currUrl || currUrl !== parsedUrl) {
-			updateStats(currUrl, timer.getSeconds());
-			saveStats(currUrl, timer.getSeconds());
+			setStats(currUrl, timer.getSeconds());
 			currUrl = parsedUrl;
 			timer.reset();
-			
-			console.log(stats);
 		}
 	});
 });
