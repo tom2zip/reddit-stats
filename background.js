@@ -13,7 +13,6 @@ const initTimer = function() {
 	return {
 		start: function() {
 			timerObj = setInterval(function() {
-				console.log(seconds);
 				seconds++;
 			}, 1000);
 		},
@@ -72,7 +71,6 @@ function setStats(url, seconds) {
 chrome.tabs.onActivated.addListener(function(info) {
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
-		console.log('tab changed to: ' + url);
 		if (!currUrl || currUrl !== parsedUrl) {
 			setStats(currUrl, timer.getSeconds());
 			currUrl = parsedUrl;
@@ -82,10 +80,8 @@ chrome.tabs.onActivated.addListener(function(info) {
 });
 
 chrome.windows.onFocusChanged.addListener(function() {
-	console.log('window changed');
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
-		console.log('tab chagned to: ' + url);
 		setStats(currUrl, timer.getSeconds());
 		currUrl = parsedUrl;
 		timer.reset();
