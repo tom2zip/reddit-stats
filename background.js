@@ -1,3 +1,11 @@
+document.addEventListener('DOMContentLoaded', function() {
+	timer = initTimer();
+	getCurrentTabUrl(function(url) {
+		currUrl = parseUrl(url);
+	});
+	timer.start();
+});
+
 const initTimer = function() {
 	let timerObj = {};
 	let seconds = 0;
@@ -51,10 +59,6 @@ function parseUrl(url) {
 	return url.substr(8).split('/')[0];
 }
 
-function getStats(url) {
-
-}
-
 function setStats(url, seconds) {
 	if (!localStorage.getItem(url)) {
 		localStorage.setItem(url, seconds);
@@ -64,7 +68,6 @@ function setStats(url, seconds) {
 	}
 }
 
-// reset timer on tab change
 chrome.tabs.onActivated.addListener(function(info) {
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
@@ -74,13 +77,4 @@ chrome.tabs.onActivated.addListener(function(info) {
 			timer.reset();
 		}
 	});
-});
-
-// start timer in the beginning
-document.addEventListener('DOMContentLoaded', function() {
-	timer = initTimer();
-	getCurrentTabUrl(function(url) {
-		currUrl = parseUrl(url);
-	});
-	timer.start();
 });
