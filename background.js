@@ -13,6 +13,7 @@ const initTimer = function() {
 	return {
 		start: function() {
 			timerObj = setInterval(function() {
+				console.log(seconds);
 				seconds++;
 			}, 1000);
 		},
@@ -35,7 +36,7 @@ let timer = {};
 function getCurrentTabUrl(callback) {
 	const queryInfo = {
 		active: true,
-		//currentWindow: true
+		currentWindow: true
 	};
 	chrome.tabs.query(queryInfo, function(tabs) {
 		// tabs[0] will always be the current tab on current window
@@ -71,10 +72,22 @@ function setStats(url, seconds) {
 chrome.tabs.onActivated.addListener(function(info) {
 	getCurrentTabUrl(function(url) {
 		const parsedUrl = parseUrl(url);
+		console.log('tab changed to: ' + url);
 		if (!currUrl || currUrl !== parsedUrl) {
 			setStats(currUrl, timer.getSeconds());
 			currUrl = parsedUrl;
 			timer.reset();
 		}
+	});
+});
+
+chrome.windows.onFocusChanged.addListener(function() {
+	console.log('window changed');
+	getCurrentTabUrl(function(url) {
+		const parsedUrl = parseUrl(url);
+		console.log('tab chagned to: ' + url);
+		setStats(currUrl, timer.getSeconds());
+		currUrl = parsedUrl;
+		timer.reset();
 	});
 });

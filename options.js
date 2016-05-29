@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-	console.log('hello friendo');
+	console.log('hello');
 	populateStats();
 });
 
