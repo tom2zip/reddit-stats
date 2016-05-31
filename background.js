@@ -1,4 +1,4 @@
-let currUrl = '';
+let currSubreddit = '';
 let timer = {};
 
 const initTimer = function() {
@@ -18,6 +18,14 @@ const initTimer = function() {
 			this.start();
 		},
 
+		stop() {
+			clearInterval(timerObj);
+		},
+
+		resume() {
+			this.start();
+		},
+
 		getSeconds() {
 			return seconds;
 		},
@@ -30,7 +38,6 @@ function getCurrentTabUrl(callback) {
 		currentWindow: true,
 	};
 	chrome.tabs.query(queryInfo, tabs => {
-		// tabs[0] will always be the current tab on current window
 		const tab = tabs[0];
 		const url = tab.url;
 		// console.assert(typeof url == 'string', 'tab.url should be a string');
@@ -38,52 +45,54 @@ function getCurrentTabUrl(callback) {
 	});
 }
 
-// cuts off the http(s):// part from the url
-function parseUrl(url) {
-	const httpPart = url.substr(0, 5);
-
-	// starts with http
-	if (httpPart.indexOf('s') === -1) {
-		return url.substr(7).split('/')[0];
-	}
-
-	// starts with https
-	return url.substr(8).split('/')[0];
+// TODO: might need more robust way
+function isRedditUrl(url) {
+	return url.indexOf('reddit') !== -1;
 }
 
-function setStats(url, seconds) {
-	if (!localStorage.getItem(url)) {
-		localStorage.setItem(url, seconds);
+function getSubredditFromUrl(url) {
+	return url.split('/')[4];
+}
+
+function setStats(subreddit, seconds) {
+	if (!localStorage.getItem(subreddit)) {
+		localStorage.setItem(subreddit, seconds);
 	} else {
-		const localStorageNumValue = parseInt(localStorage.getItem(url), 10);
-		localStorage.setItem(url, localStorageNumValue + seconds);
+		const localStorageNumValue = parseInt(localStorage.getItem(subreddit), 10);
+		localStorage.setItem(subreddit, localStorageNumValue + seconds);
 	}
 }
 
 document.addEventListener('DOMContentLoaded', () => {
 	timer = initTimer();
-	getCurrentTabUrl((url) => {
-		currUrl = parseUrl(url);
-	});
-	timer.start();
 });
 
 chrome.tabs.onActivated.addListener(() => {
 	getCurrentTabUrl(url => {
-		const parsedUrl = parseUrl(url);
-		if (!currUrl || currUrl !== parsedUrl) {
-			setStats(currUrl, timer.getSeconds());
-			currUrl = parsedUrl;
-			timer.reset();
+		if (isRedditUrl(url)) {
+			if (currSubreddit !== getSubredditFromUrl(url)) {
+				setStats(currSubreddit, timer.getSeconds());
+				currSubreddit = getSubredditFromUrl(url);
+				console.log(currSubreddit);
+				timer.reset();
+			}
+		} else {
+			timer.stop();
 		}
 	});
 });
 
 chrome.windows.onFocusChanged.addListener(() => {
 	getCurrentTabUrl(url => {
-		const parsedUrl = parseUrl(url);
-		setStats(currUrl, timer.getSeconds());
-		currUrl = parsedUrl;
-		timer.reset();
+		if (isRedditUrl(url)) {
+			if (currSubreddit !== getSubredditFromUrl(url)) {
+				setStats(currSubreddit, timer.getSeconds());
+				currSubreddit = getSubredditFromUrl(url);
+				console.log(currSubreddit);
+				timer.reset();
+			}
+		} else {
+			timer.stop();
+		}
 	});
 });
