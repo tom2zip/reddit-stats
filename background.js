@@ -54,6 +54,19 @@ function getSubredditFromUrl(url) {
 	return url.split('/')[4];
 }
 
+function resetTimerAndSetStatsIfRedditUrl(url) {
+	if (isRedditUrl(url)) {
+		if (currSubreddit !== getSubredditFromUrl(url)) {
+			setStats(currSubreddit, timer.getSeconds());
+			currSubreddit = getSubredditFromUrl(url);
+			console.log(currSubreddit);
+			timer.reset();
+		}
+	} else {
+		timer.stop();
+	}
+}
+
 function setStats(subreddit, seconds) {
 	if (!localStorage.getItem(subreddit)) {
 		localStorage.setItem(subreddit, seconds);
@@ -69,30 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 chrome.tabs.onActivated.addListener(() => {
 	getCurrentTabUrl(url => {
-		if (isRedditUrl(url)) {
-			if (currSubreddit !== getSubredditFromUrl(url)) {
-				setStats(currSubreddit, timer.getSeconds());
-				currSubreddit = getSubredditFromUrl(url);
-				console.log(currSubreddit);
-				timer.reset();
-			}
-		} else {
-			timer.stop();
-		}
+		resetTimerAndSetStatsIfRedditUrl(url);
 	});
 });
 
 chrome.windows.onFocusChanged.addListener(() => {
 	getCurrentTabUrl(url => {
-		if (isRedditUrl(url)) {
-			if (currSubreddit !== getSubredditFromUrl(url)) {
-				setStats(currSubreddit, timer.getSeconds());
-				currSubreddit = getSubredditFromUrl(url);
-				console.log(currSubreddit);
-				timer.reset();
-			}
-		} else {
-			timer.stop();
-		}
+		resetTimerAndSetStatsIfRedditUrl(url);
 	});
 });
