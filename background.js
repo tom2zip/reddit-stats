@@ -32,6 +32,10 @@ const initTimer = function() {
 	};
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+	timer = initTimer();
+});
+
 function getCurrentTabUrl(callback) {
 	const queryInfo = {
 		active: true,
@@ -51,7 +55,16 @@ function isRedditUrl(url) {
 }
 
 function getSubredditFromUrl(url) {
-	return url.split('/')[4];
+	return url.split('/')[4] || 'front';
+}
+
+function setStats(subreddit, seconds) {
+	if (!localStorage.getItem(subreddit)) {
+		localStorage.setItem(subreddit, seconds);
+	} else {
+		const localStorageNumValue = parseInt(localStorage.getItem(subreddit), 10);
+		localStorage.setItem(subreddit, localStorageNumValue + seconds);
+	}
 }
 
 function resetTimerAndSetStatsIfRedditUrl(url) {
@@ -67,23 +80,16 @@ function resetTimerAndSetStatsIfRedditUrl(url) {
 	}
 }
 
-function setStats(subreddit, seconds) {
-	if (!localStorage.getItem(subreddit)) {
-		localStorage.setItem(subreddit, seconds);
-	} else {
-		const localStorageNumValue = parseInt(localStorage.getItem(subreddit), 10);
-		localStorage.setItem(subreddit, localStorageNumValue + seconds);
-	}
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-	timer = initTimer();
-});
-
 chrome.tabs.onActivated.addListener(() => {
 	getCurrentTabUrl(url => {
 		resetTimerAndSetStatsIfRedditUrl(url);
 	});
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+	if (changeInfo.status === 'complete') {
+		resetTimerAndSetStatsIfRedditUrl(tab.url);
+	}
 });
 
 chrome.windows.onFocusChanged.addListener(() => {
