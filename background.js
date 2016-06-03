@@ -55,7 +55,11 @@ function isRedditUrl(url) {
 }
 
 function getSubredditFromUrl(url) {
-	return url.split('/')[4] || 'front';
+	const splitUrl = url.split('/');
+	if (splitUrl[3] === 'r') {
+		return splitUrl[4];
+	}
+	return 'everything else';
 }
 
 function setStats(subreddit, seconds) {
