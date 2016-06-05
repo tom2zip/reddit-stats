@@ -1,0 +1,16 @@
+.column, .columns {
+	border: 1px solid black;
+}
+
+.chart {
+	background-color: rgb(200, 200, 200);
+}
+
+.chart div {
+	font: 10px sans-serif;
+	background-color: steelblue;
+	text-align: right;
+	padding: 3px;
+	margin: 1px;
+	color: white;
+}
