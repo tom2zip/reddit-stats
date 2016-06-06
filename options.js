@@ -59,12 +59,23 @@ function constructGraph(data) {
 	console.log(subreddits, timeSpent);
 
 	const width = 900;
-	const barHeight = 20;
+	const barHeight = 40;
 	const height = barHeight * timeSpent.length;
 
 	const xScale = d3.scale.linear()
 		.domain([0, d3.max(timeSpent)])
 		.range([0, width]);
+
+	const yScale = d3.scale.linear()
+		.domain([0, subreddits.length])
+		.range([0, height]);
+
+	const yAxis = d3.svg.axis();
+	yAxis.orient('left')
+		.scale(yScale)
+		.tickSize(0)
+		.tickFormat((d, i) => subreddits[i])
+		.tickValues(d3.range(5));
 
 	const chart = d3.select('#chart')
 		.attr('width', width)
@@ -72,12 +83,19 @@ function constructGraph(data) {
 
 	const bar = chart.selectAll('g')
 		.data(timeSpent)
-		.enter().append('g')
-			.attr('transform', (d, i) => 'translate(0, ' + i * barHeight + ')');
+		.enter()
+			.append('g')
+			.attr('transform', (d, i) => `translate(0, ${i * barHeight})`);
 
 	bar.append('rect')
 		.attr('width', xScale)
 		.attr('height', barHeight - 1);
+
+	const yXis = chart.append('g')
+		.attr('transform', 'translate(140, 20)')
+		.attr('id', 'yaxis')
+		.call(yAxis);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 	console.log('hello');
