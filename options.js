@@ -56,15 +56,14 @@ function constructGraph(data) {
 		subreddits.push(data[i].subreddit);
 		timeSpent.push(data[i].time);
 	}
-	console.log(subreddits, timeSpent);
 
 	const width = 900;
-	const barHeight = 40;
-	const height = barHeight * timeSpent.length;
+	const barHeight = 20;
+	const height = barHeight * timeSpent.length + 100;
 
 	const xScale = d3.scale.linear()
 		.domain([0, d3.max(timeSpent)])
-		.range([0, width]);
+		.range([0, 700]);
 
 	const yScale = d3.scale.linear()
 		.domain([0, subreddits.length])
@@ -85,20 +84,26 @@ function constructGraph(data) {
 		.data(timeSpent)
 		.enter()
 			.append('g')
-			.attr('transform', (d, i) => `translate(0, ${i * barHeight})`);
+			.attr('transform', (d, i) => `translate(125, ${10 + i * (barHeight + 20)})`);
 
 	bar.append('rect')
 		.attr('width', xScale)
-		.attr('height', barHeight - 1);
+		.attr('height', barHeight - 1)
+		.attr('fill', 'steelblue')
+		.on('mouseover', function() {
+			d3.select(this).attr('fill', 'lightsteelblue');
+		})
+		.on('mouseout', function() {
+			d3.select(this).attr('fill', 'steelblue');
+		});
 
-	const yXis = chart.append('g')
-		.attr('transform', 'translate(140, 20)')
+	chart.append('g')
+		.attr('transform', 'translate(120, 20)')
 		.attr('id', 'yaxis')
 		.call(yAxis);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	console.log('hello');
 	const topFive = calculateTopFive(getStats());
 	console.log(topFive);
 	constructGraph(topFive);

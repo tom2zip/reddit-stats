@@ -1,10 +1,26 @@
-.column, .columns {
-	border: 1px solid black;
+html, body {
+	height: 100%;
 }
 
-.chart {
-	background-color: rgb(200, 200, 200);
+.container {
+	height: 100%;
+	width: 100%;
 }
+
+.row {
+	height: 100%;
+	background-color: rgb(240, 240, 240);
+}
+
+#chart {
+	background-color: rgb(240, 240, 240);
+	margin: 5px;
+}
+
+/*#chart rect {
+	stroke: white;
+	fill: steelblue;
+}*/
 
 .chart div {
 	font: 10px sans-serif;
