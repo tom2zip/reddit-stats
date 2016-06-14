@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	font-family: 'Karla', serif;
 }
 
 .container {
@@ -7,9 +8,8 @@ html, body {
 	width: 100%;
 }
 
-.row {
-	height: 100%;
-	background-color: rgb(240, 240, 240);
+.panel.panel-default {
+	box-shadow: 8px 8px 8px rgb(220, 220, 200);
 }
 
 #chart {
@@ -17,16 +17,6 @@ html, body {
 	margin: 5px;
 }
 
-/*#chart rect {
-	stroke: white;
-	fill: steelblue;
-}*/
-
-.chart div {
-	font: 10px sans-serif;
-	background-color: steelblue;
-	text-align: right;
-	padding: 3px;
-	margin: 1px;
-	color: white;
+#chart text {
+	font-weight: bold;
 }

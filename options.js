@@ -84,21 +84,21 @@ function constructGraph(data) {
 		.data(timeSpent)
 		.enter()
 			.append('g')
-			.attr('transform', (d, i) => `translate(125, ${10 + i * (barHeight + 20)})`);
+			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
 
 	bar.append('rect')
 		.attr('width', xScale)
 		.attr('height', barHeight - 1)
-		.attr('fill', 'steelblue')
+		.attr('fill', 'orangered')
 		.on('mouseover', function() {
-			d3.select(this).attr('fill', 'lightsteelblue');
+			d3.select(this).attr('fill', 'lightsalmon');
 		})
 		.on('mouseout', function() {
-			d3.select(this).attr('fill', 'steelblue');
+			d3.select(this).attr('fill', 'orangered');
 		});
 
 	chart.append('g')
-		.attr('transform', 'translate(120, 20)')
+		.attr('transform', 'translate(130, 20)')
 		.attr('id', 'yaxis')
 		.call(yAxis);
 }
