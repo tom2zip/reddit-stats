@@ -97,6 +97,13 @@ function constructGraph(data) {
 			d3.select(this).attr('fill', 'orangered');
 		});
 
+	bar.append('text')
+		.attr('x', d => xScale(d) + 3)
+		.attr('y', barHeight / 2)
+		.attr('dy', '.35em')
+		.text(d => d);
+
+
 	chart.append('g')
 		.attr('transform', 'translate(130, 20)')
 		.attr('id', 'yaxis')
