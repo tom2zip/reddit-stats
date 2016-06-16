@@ -87,7 +87,7 @@ function constructGraph(data) {
 			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
 
 	bar.append('rect')
-		.attr('width', xScale)
+		.attr('width', 0)
 		.attr('height', barHeight - 1)
 		.attr('fill', 'orangered')
 		.on('mouseover', function() {
@@ -95,14 +95,20 @@ function constructGraph(data) {
 		})
 		.on('mouseout', function() {
 			d3.select(this).attr('fill', 'orangered');
-		});
+		})
+		.transition()
+			.duration(500)
+			.delay((d, i) => i * 100)
+			.attr('width', (d, i) => xScale(d));
 
 	bar.append('text')
-		.attr('x', d => xScale(d) + 3)
+		.attr('x', d => 0)
 		.attr('y', barHeight / 2)
 		.attr('dy', '.35em')
-		.text(d => d);
-
+		.text(d => d)
+		.transition()
+			.duration(500)
+			.attr('x', d => xScale(d) + 3)
 
 	chart.append('g')
 		.attr('transform', 'translate(130, 20)')
