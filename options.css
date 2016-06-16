@@ -31,3 +31,15 @@ html, body {
 	background-color: rgb(245, 245, 245);
 	margin: 5px;
 }
+
+#table-heading-rankings {
+	width: 10%;
+}
+
+#table-heading-subreddit {
+	width: 50%;
+}
+
+#table-heading-time {
+	width: 40%;
+}

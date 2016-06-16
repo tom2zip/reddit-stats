@@ -99,16 +99,16 @@ function constructGraph(data) {
 		.transition()
 			.duration(500)
 			.delay((d, i) => i * 100)
-			.attr('width', (d, i) => xScale(d));
+			.attr('width', d => xScale(d));
 
 	bar.append('text')
-		.attr('x', d => 0)
+		.attr('x', 0)
 		.attr('y', barHeight / 2)
 		.attr('dy', '.35em')
 		.text(d => d)
 		.transition()
 			.duration(500)
-			.attr('x', d => xScale(d) + 3)
+			.attr('x', d => xScale(d) + 3);
 
 	chart.append('g')
 		.attr('transform', 'translate(130, 20)')
