@@ -130,7 +130,6 @@ function constructTable(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	const topFive = calculateTopFive(getStats());
-	console.log(topFive);
 	constructGraph(topFive);
 	constructTable(topFive);
 });
