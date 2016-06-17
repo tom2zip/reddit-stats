@@ -101,23 +101,36 @@ function constructGraph(data) {
 			.delay((d, i) => i * 100)
 			.attr('width', d => xScale(d));
 
-	bar.append('text')
-		.attr('x', 0)
-		.attr('y', barHeight / 2)
-		.attr('dy', '.35em')
-		.text(d => d)
-		.transition()
-			.duration(500)
-			.attr('x', d => xScale(d) + 3);
-
 	chart.append('g')
 		.attr('transform', 'translate(130, 20)')
 		.attr('id', 'yaxis')
 		.call(yAxis);
 }
 
+function constructTable(data) {
+	const subredditEntries = document.getElementsByClassName('subreddit-name');
+	const timeSpentEntries = document.getElementsByClassName('subreddit-time-spent');
+	for (let i = 0; i < subredditEntries.length; i++) {
+		const subredditName = data[i].subreddit;
+		const timeSpent = convertStatToTime(data[i].time);
+		const hours = timeSpent.hours;
+		const minutes = timeSpent.minutes;
+		const seconds = timeSpent.seconds;
+
+		subredditEntries[i].innerHTML = subredditName;
+		subredditEntries[i].setAttribute('href', `https://www.reddit.com/r/${subredditName}`);
+
+		if (timeSpent.hours > 0) {
+			timeSpentEntries[i].innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+		} else {
+			timeSpentEntries[i].innerHTML = `${minutes}m ${seconds}s`;
+		}
+	}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	const topFive = calculateTopFive(getStats());
 	console.log(topFive);
 	constructGraph(topFive);
+	constructTable(topFive);
 });
