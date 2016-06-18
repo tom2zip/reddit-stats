@@ -67,10 +67,20 @@ function getSubredditFromUrl(url) {
 
 function setStats(subreddit, seconds) {
 	if (!localStorage.getItem(subreddit)) {
-		localStorage.setItem(subreddit, seconds);
+		const newSubredditEntry = {
+			seconds,
+			views: 1,
+		};
+		localStorage.setItem(subreddit, JSON.stringify(newSubredditEntry));
 	} else {
-		const localStorageNumValue = parseInt(localStorage.getItem(subreddit), 10);
-		localStorage.setItem(subreddit, localStorageNumValue + seconds);
+		const subredditEntry = JSON.parse(localStorage.getItem(subreddit));
+		const timeSpent = subredditEntry.seconds;
+		const numViews = subredditEntry.views;
+		const newSubredditEntry = {
+			seconds: timeSpent + seconds,
+			views: numViews + 1,
+		};
+		localStorage.setItem(subreddit, JSON.stringify(newSubredditEntry));
 	}
 }
 
@@ -79,7 +89,7 @@ function resetTimerAndSetStatsIfRedditUrl(url) {
 		if (currSubreddit !== getSubredditFromUrl(url)) {
 			setStats(currSubreddit, timer.getSeconds());
 			currSubreddit = getSubredditFromUrl(url);
-			console.log(currSubreddit);
+			// console.log(currSubreddit);
 			timer.reset();
 		}
 	} else {
