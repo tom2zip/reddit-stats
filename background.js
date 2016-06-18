@@ -44,7 +44,6 @@ function getCurrentTabUrl(callback) {
 	chrome.tabs.query(queryInfo, tabs => {
 		const tab = tabs[0];
 		const url = tab.url;
-		// console.assert(typeof url == 'string', 'tab.url should be a string');
 		callback(url);
 	});
 }
@@ -57,7 +56,11 @@ function isRedditUrl(url) {
 function getSubredditFromUrl(url) {
 	const splitUrl = url.split('/');
 	if (splitUrl[3] === 'r') {
-		return splitUrl[4];
+		const subredditName = splitUrl[4];
+		if (subredditName.indexOf('#') > -1) {
+			return subredditName.split('#')[0];
+		}
+		return subredditName;
 	}
 	return 'everything else';
 }

@@ -13,7 +13,6 @@ function convertStatToTime(stat) {
 function getStats() {
 	const stats = [];
 	for (const key in localStorage) {
-		// stats[key] = convertStatToTime(localStorage[key]);
 		stats[key] = parseInt(localStorage[key], 10);
 	}
 	return stats;
