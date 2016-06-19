@@ -44,17 +44,17 @@ html, body {
 
 #chart {
 	background-color: rgb(245, 245, 245);
-	margin: 5px;
 }
 
-#table-heading-rankings {
+.table-heading-rankings {
 	width: 10%;
 }
 
-#table-heading-subreddit {
+.table-heading-subreddit {
 	width: 50%;
 }
 
-#table-heading-time {
+.table-heading-time,
+.table-heading-views {
 	width: 40%;
 }
