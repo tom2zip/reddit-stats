@@ -10,15 +10,25 @@ function convertStatToTime(stat) {
 	};
 }
 
-function getStats() {
-	const stats = [];
+function getArrayOfTimeSpent() {
+	const timeSpentArr = [];
 	for (const key in localStorage) {
-		stats[key] = parseInt(localStorage[key], 10);
+		const subredditEntry = JSON.parse(localStorage[key]);
+		timeSpentArr[key] = subredditEntry.seconds;
 	}
-	return stats;
+	return timeSpentArr;
 }
 
-function calculateTopFive(stats) {
+function getArrayOfViews() {
+	const viewsArr = [];
+	for (const key in localStorage) {
+		const subredditEntry = JSON.parse(localStorage[key]);
+		viewsArr[key] = subredditEntry.views;
+	}
+	return viewsArr;
+}
+
+function calculateTopFiveTimeSpent(stats) {
 	const subreddits = [];
 	const timeSpent = [];
 	const topFive = [];
@@ -128,7 +138,7 @@ function constructTable(data) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	const topFive = calculateTopFive(getStats());
-	constructGraph(topFive);
-	constructTable(topFive);
+	const topFiveTimeSpent = calculateTopFiveTimeSpent(getArrayOfTimeSpent());
+	constructGraph(topFiveTimeSpent);
+	constructTable(topFiveTimeSpent);
 });
