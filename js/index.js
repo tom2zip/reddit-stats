@@ -1,23 +1,20 @@
 function getCurrentTabUrl(callback) {
-
-	var queryInfo = {
+	const queryInfo = {
 		active: true,
-		currentWindow: true
+		currentWindow: true,
 	};
 
-	chrome.tabs.query(queryInfo, function(tabs) {
-		var tab = tabs[0];
-		var url = tab.url;
-		console.assert(typeof url == 'string', 'tab.url should be a string');
+	chrome.tabs.query(queryInfo, tabs => {
+		const tab = tabs[0];
+		const url = tab.url;
 		callback(url);
 	});
-
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-	getCurrentTabUrl(function(url) {
-		var content = document.getElementById('content');
-		content.innerHTML = "Your current active tab url is: " + url;
+document.addEventListener('DOMContentLoaded', () => {
+	getCurrentTabUrl(url => {
+		const content = document.getElementById('content');
+		content.innerHTML = `Your current active tab url is: ${url}`;
 		chrome.runtime.sendMessage(url);
 	});
 });
