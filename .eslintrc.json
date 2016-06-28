@@ -12,6 +12,7 @@
     	"space-before-function-paren": "off",
     	"no-undef": "warn",
     	"guard-for-in": "off",
-    	"no-restricted-syntax": "off"
+    	"no-restricted-syntax": "off",
+        "no-param-reassign": "off"
     }
 }

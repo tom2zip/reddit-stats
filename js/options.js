@@ -43,7 +43,7 @@ function calculateTopFiveTimeSpent(stats) {
 		const maxTimeSpentIndex = timeSpent.indexOf(maxTimeSpent);
 		const maxTimeSpentSubreddit = subreddits[maxTimeSpentIndex];
 		if (maxTimeSpentSubreddit === 'everything else' ||
-			maxTimeSpentSubreddit === 'front' || 
+			maxTimeSpentSubreddit === 'front' ||
 			maxTimeSpentSubreddit === 'longest_visit') {
 			subreddits.splice(maxTimeSpentIndex, 1);
 			timeSpent.splice(maxTimeSpentIndex, 1);
@@ -75,7 +75,7 @@ function calculateTopFiveViews(stats) {
 		const mostViewsIndex = views.indexOf(mostViews);
 		const mostViewsSubreddit = subreddits[mostViewsIndex];
 		if (mostViewsSubreddit === 'everything else' ||
-			mostViewsSubreddit === 'front' || 
+			mostViewsSubreddit === 'front' ||
 			mostViewsSubreddit === 'longest_visit') {
 			subreddits.splice(mostViewsIndex, 1);
 			views.splice(mostViewsIndex, 1);
@@ -119,7 +119,7 @@ function constructTimeSpentGraph(data) {
 		.tickFormat((d, i) => subreddits[i])
 		.tickValues(d3.range(5));
 
-	const chart = d3.select('#timespent-chart')
+	const chart = d3.select('#chart')
 		.attr('width', width)
 		.attr('height', height);
 
@@ -177,7 +177,7 @@ function constructViewsGraph(data) {
 		.tickFormat((d, i) => subreddits[i])
 		.tickValues(d3.range(5));
 
-	const chart = d3.select('#views-chart')
+	const chart = d3.select('#chart')
 		.attr('width', width)
 		.attr('height', height);
 
@@ -209,8 +209,10 @@ function constructViewsGraph(data) {
 }
 
 function constructTimeSpentTable(data) {
-	const subredditEntries = document.getElementsByClassName('subreddit-timespent-name');
-	const timeSpentEntries = document.getElementsByClassName('subreddit-timespent-time');
+	const tableHeading = document.getElementsByClassName('table-heading-metric')[0];
+	const subredditEntries = document.getElementsByClassName('subreddit-name');
+	const timeSpentEntries = document.getElementsByClassName('subreddit-metric');
+	tableHeading.innerHTML = 'Time';
 	for (let i = 0; i < subredditEntries.length; i++) {
 		const subredditName = data[i].subreddit;
 		const timeSpent = convertStatToTime(data[i].time);
@@ -230,8 +232,10 @@ function constructTimeSpentTable(data) {
 }
 
 function constructViewsTable(data) {
-	const subredditEntries = document.getElementsByClassName('subreddit-views-name');
-	const viewsEntries = document.getElementsByClassName('subreddit-views-views');
+	const tableHeading = document.getElementsByClassName('table-heading-metric')[0];
+	const subredditEntries = document.getElementsByClassName('subreddit-name');
+	const viewsEntries = document.getElementsByClassName('subreddit-metric');
+	tableHeading.innerHTML = 'Views';
 	for (let i = 0; i < subredditEntries.length; i++) {
 		const subredditName = data[i].subreddit;
 		const views = data[i].views;
@@ -241,13 +245,35 @@ function constructViewsTable(data) {
 	}
 }
 
+function clearChart() {
+	d3.selectAll('svg > *').remove();
+}
+
+function render(currentTab) {
+	clearChart();
+	if (currentTab === 'TIME_SPENT') {
+		const topFiveTimeSpent = calculateTopFiveTimeSpent(getArrayOfTimeSpent());
+		constructTimeSpentGraph(topFiveTimeSpent);
+		constructTimeSpentTable(topFiveTimeSpent);
+	} else if (currentTab === 'VIEWS') {
+		const topFiveViews = calculateTopFiveViews(getArrayOfViews());
+		constructViewsGraph(topFiveViews);
+		constructViewsTable(topFiveViews);
+	}
+}
+
+function changeTab(event) {
+	if (event.target.innerHTML === 'Time Spent') {
+		currentTab = 'TIME_SPENT';
+	} else if (event.target.innerHTML === 'Views') {
+		currentTab = 'VIEWS';
+	}
+	render(currentTab);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-	const topFiveTimeSpent = calculateTopFiveTimeSpent(getArrayOfTimeSpent());
-	const topFiveViews = calculateTopFiveViews(getArrayOfViews());
+	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
+	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
 
-	constructTimeSpentGraph(topFiveTimeSpent);
-	constructTimeSpentTable(topFiveTimeSpent);
-
-	constructViewsGraph(topFiveViews);
-	constructViewsTable(topFiveViews);
+	render('TIME_SPENT');
 });

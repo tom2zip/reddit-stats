@@ -46,11 +46,6 @@ html, body {
 .panel-title {
 	font-weight: bold;
 }
-
-#chart {
-	background-color: rgb(245, 245, 245);
-}
-
 .table-heading-rankings {
 	width: 10%;
 }
