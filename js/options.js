@@ -10,81 +10,41 @@ function convertStatToTime(stat) {
 	};
 }
 
-function getArrayOfTimeSpent() {
-	const timeSpentArr = [];
+function getMetrics() {
+	const metrics = [];
 	for (const key in localStorage) {
-		const subredditEntry = JSON.parse(localStorage[key]);
-		timeSpentArr[key] = subredditEntry.seconds;
+		const nameObj = {
+			subreddit: key,
+		};
+		const timeAndViews = JSON.parse(localStorage[key]);
+		const metric = Object.assign(nameObj, timeAndViews);
+		metrics.push(metric);
 	}
-	return timeSpentArr;
+	return metrics;
 }
 
-function getArrayOfViews() {
-	const viewsArr = [];
-	for (const key in localStorage) {
-		const subredditEntry = JSON.parse(localStorage[key]);
-		viewsArr[key] = subredditEntry.views;
-	}
-	return viewsArr;
-}
-
-function calculateTopFiveTimeSpent(stats) {
-	const subreddits = [];
-	const timeSpent = [];
+function getTopFiveMetrics(metrics, currentTab) {
 	const topFive = [];
-	for (const subreddit in stats) {
-		subreddits.push(subreddit);
-		timeSpent.push(stats[subreddit]);
-	}
+	const measuredMetricArr = currentTab === 'TIME_SPENT' ?
+		metrics.map(metric => metric.seconds) :
+		metrics.map(metric => metric.views);
 
 	let i = 0;
 	while (i < 5) {
-		const maxTimeSpent = Math.max.apply(Math, timeSpent);
-		const maxTimeSpentIndex = timeSpent.indexOf(maxTimeSpent);
-		const maxTimeSpentSubreddit = subreddits[maxTimeSpentIndex];
-		if (maxTimeSpentSubreddit === 'everything else' ||
-			maxTimeSpentSubreddit === 'front' ||
-			maxTimeSpentSubreddit === 'longest_visit') {
-			subreddits.splice(maxTimeSpentIndex, 1);
-			timeSpent.splice(maxTimeSpentIndex, 1);
+		const maxMetric = Math.max.apply(Math, measuredMetricArr);
+		const maxMetricIndex = measuredMetricArr.indexOf(maxMetric);
+		const maxMetricSubreddit = metrics[maxMetricIndex].subreddit;
+		if (maxMetricSubreddit === 'everything else' ||
+			maxMetricSubreddit === 'front' ||
+			maxMetricSubreddit === 'longest_visit') {
+			metrics.splice(maxMetricIndex, 1);
+			measuredMetricArr.splice(maxMetricIndex, 1);
 			continue;
 		}
-		topFive.push({ subreddit: maxTimeSpentSubreddit, time: maxTimeSpent });
 
-		subreddits.splice(maxTimeSpentIndex, 1);
-		timeSpent.splice(maxTimeSpentIndex, 1);
-
-		i++;
-	}
-
-	return topFive;
-}
-
-function calculateTopFiveViews(stats) {
-	const subreddits = [];
-	const views = [];
-	const topFive = [];
-	for (const subreddit in stats) {
-		subreddits.push(subreddit);
-		views.push(stats[subreddit]);
-	}
-
-	let i = 0;
-	while (i < 5) {
-		const mostViews = Math.max.apply(Math, views);
-		const mostViewsIndex = views.indexOf(mostViews);
-		const mostViewsSubreddit = subreddits[mostViewsIndex];
-		if (mostViewsSubreddit === 'everything else' ||
-			mostViewsSubreddit === 'front' ||
-			mostViewsSubreddit === 'longest_visit') {
-			subreddits.splice(mostViewsIndex, 1);
-			views.splice(mostViewsIndex, 1);
-			continue;
-		}
-		topFive.push({ subreddit: mostViewsSubreddit, views: mostViews });
-
-		subreddits.splice(mostViewsIndex, 1);
-		views.splice(mostViewsIndex, 1);
+		topFive.push(metrics[maxMetricIndex]);
+		metrics.splice(maxMetricIndex, 1);
+		measuredMetricArr.splice(maxMetricIndex, 1);
 
 		i++;
 	}
@@ -97,7 +57,7 @@ function constructTimeSpentGraph(data) {
 	const timeSpent = [];
 	for (let i = 0; i < data.length; i++) {
 		subreddits.push(data[i].subreddit);
-		timeSpent.push(data[i].time);
+		timeSpent.push(data[i].seconds);
 	}
 
 	const width = 700;
@@ -215,7 +175,7 @@ function constructTimeSpentTable(data) {
 	tableHeading.innerHTML = 'Time';
 	for (let i = 0; i < subredditEntries.length; i++) {
 		const subredditName = data[i].subreddit;
-		const timeSpent = convertStatToTime(data[i].time);
+		const timeSpent = convertStatToTime(data[i].seconds);
 		const hours = timeSpent.hours;
 		const minutes = timeSpent.minutes;
 		const seconds = timeSpent.seconds;
@@ -251,24 +211,23 @@ function clearChart() {
 
 function render(currentTab) {
 	clearChart();
+	const metrics = getMetrics();
+	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
 	if (currentTab === 'TIME_SPENT') {
-		const topFiveTimeSpent = calculateTopFiveTimeSpent(getArrayOfTimeSpent());
-		constructTimeSpentGraph(topFiveTimeSpent);
-		constructTimeSpentTable(topFiveTimeSpent);
+		constructTimeSpentGraph(topFiveMetrics);
+		constructTimeSpentTable(topFiveMetrics);
 	} else if (currentTab === 'VIEWS') {
-		const topFiveViews = calculateTopFiveViews(getArrayOfViews());
-		constructViewsGraph(topFiveViews);
-		constructViewsTable(topFiveViews);
+		constructViewsGraph(topFiveMetrics);
+		constructViewsTable(topFiveMetrics);
 	}
 }
 
 function changeTab(event) {
 	if (event.target.innerHTML === 'Time Spent') {
-		currentTab = 'TIME_SPENT';
+		render('TIME_SPENT');
 	} else if (event.target.innerHTML === 'Views') {
-		currentTab = 'VIEWS';
+		render('VIEWS');
 	}
-	render(currentTab);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
