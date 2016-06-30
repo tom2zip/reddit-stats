@@ -52,7 +52,7 @@ function getTopFiveMetrics(metrics, currentTab) {
 	return topFive;
 }
 
-function constructGraph(metrics, currentTab) {
+function constructChart(metrics, currentTab) {
 	const subreddits = metrics.map(metric => metric.subreddit);
 	const measuredMetricArr = currentTab === 'VIEWS' ?
 		metrics.map(metric => metric.views) :
@@ -140,7 +140,7 @@ function render(currentTab) {
 	clearChart();
 	const metrics = getMetrics();
 	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
-	constructGraph(topFiveMetrics, currentTab);
+	constructChart(topFiveMetrics, currentTab);
 	constructTable(topFiveMetrics, currentTab);
 }
 
