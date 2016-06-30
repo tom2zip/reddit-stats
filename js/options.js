@@ -52,24 +52,22 @@ function getTopFiveMetrics(metrics, currentTab) {
 	return topFive;
 }
 
-function constructTimeSpentGraph(data) {
-	const subreddits = [];
-	const timeSpent = [];
-	for (let i = 0; i < data.length; i++) {
-		subreddits.push(data[i].subreddit);
-		timeSpent.push(data[i].seconds);
-	}
+function constructGraph(metrics, currentTab) {
+	const subreddits = metrics.map(metric => metric.subreddit);
+	const measuredMetricArr = currentTab === 'VIEWS' ?
+		metrics.map(metric => metric.views) :
+		metrics.map(metric => metric.seconds);
 
 	const width = 700;
 	const barHeight = 20;
-	const height = barHeight * timeSpent.length + 100;
+	const height = 5 * barHeight + 100;
 
 	const xScale = d3.scale.linear()
-		.domain([0, d3.max(timeSpent)])
+		.domain([0, d3.max(measuredMetricArr)])
 		.range([0, 500]);
 
 	const yScale = d3.scale.linear()
-		.domain([0, subreddits.length])
+		.domain([0, 5])
 		.range([0, height]);
 
 	const yAxis = d3.svg.axis();
@@ -84,7 +82,7 @@ function constructTimeSpentGraph(data) {
 		.attr('height', height);
 
 	const bar = chart.selectAll('g')
-		.data(timeSpent)
+		.data(measuredMetricArr)
 		.enter()
 			.append('g')
 			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
@@ -108,68 +106,6 @@ function constructTimeSpentGraph(data) {
 		.attr('transform', 'translate(130, 20)')
 		.attr('id', 'yaxis')
 		.call(yAxis);
-}
-
-function constructViewsGraph(data) {
-	const subreddits = [];
-	const views = [];
-	for (let i = 0; i < data.length; i++) {
-		subreddits.push(data[i].subreddit);
-		views.push(data[i].views);
-	}
-
-	const width = 700;
-	const barHeight = 20;
-	const height = barHeight * views.length + 100;
-
-	const xScale = d3.scale.linear()
-		.domain([0, d3.max(views)])
-		.range([0, 500]);
-
-	const yScale = d3.scale.linear()
-		.domain([0, subreddits.length])
-		.range([0, height]);
-
-	const yAxis = d3.svg.axis();
-	yAxis.orient('left')
-		.scale(yScale)
-		.tickSize(0)
-		.tickFormat((d, i) => subreddits[i])
-		.tickValues(d3.range(5));
-
-	const chart = d3.select('#chart')
-		.attr('width', width)
-		.attr('height', height);
-
-	const bar = chart.selectAll('g')
-		.data(views)
-		.enter()
-			.append('g')
-			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
-
-	bar.append('rect')
-		.attr('width', 0)
-		.attr('height', barHeight - 1)
-		.attr('fill', 'orangered')
-		.on('mouseover', function() {
-			d3.select(this).attr('fill', 'lightsalmon');
-		})
-		.on('mouseout', function() {
-			d3.select(this).attr('fill', 'orangered');
-		})
-		.transition()
-			.duration(500)
-			.delay((d, i) => i * 100)
-			.attr('width', d => xScale(d));
-
-	chart.append('g')
-		.attr('transform', 'translate(130, 20)')
-		.attr('id', 'yaxis')
-		.call(yAxis);
-}
-
-function clearChart() {
-	d3.selectAll('svg > *').remove();
 }
 
 function constructTable(metrics, currentTab) {
@@ -186,9 +122,9 @@ function constructTable(metrics, currentTab) {
 			metricEntries[i].innerHTML = views;
 		} else {
 			const timeSpent = convertStatToTime(metrics[i].seconds);
-			hours = timeSpent.hours;
-			minutes = timeSpent.minutes;
-			seconds = timeSpent.seconds;
+			const hours = timeSpent.hours;
+			const minutes = timeSpent.minutes;
+			const seconds = timeSpent.seconds;
 			metricEntries[i].innerHTML = timeSpent.hours > 0 ?
 				`${hours}h ${minutes}m ${seconds}s` :
 				`${minutes}m ${seconds}s`;
@@ -196,18 +132,16 @@ function constructTable(metrics, currentTab) {
 	}
 }
 
+function clearChart() {
+	d3.selectAll('svg > *').remove();
+}
+
 function render(currentTab) {
 	clearChart();
 	const metrics = getMetrics();
 	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
+	constructGraph(topFiveMetrics, currentTab);
 	constructTable(topFiveMetrics, currentTab);
-	if (currentTab === 'TIME_SPENT') {
-		constructTimeSpentGraph(topFiveMetrics);
-		constructTimeSpentTable(topFiveMetrics);
-	} else if (currentTab === 'VIEWS') {
-		constructViewsGraph(topFiveMetrics);
-		constructViewsTable(topFiveMetrics);
-	}
 }
 
 function changeTab(event) {
