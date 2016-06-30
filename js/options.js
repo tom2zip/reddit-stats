@@ -168,51 +168,39 @@ function constructViewsGraph(data) {
 		.call(yAxis);
 }
 
-function constructTimeSpentTable(data) {
-	const tableHeading = document.getElementsByClassName('table-heading-metric')[0];
-	const subredditEntries = document.getElementsByClassName('subreddit-name');
-	const timeSpentEntries = document.getElementsByClassName('subreddit-metric');
-	tableHeading.innerHTML = 'Time';
-	for (let i = 0; i < subredditEntries.length; i++) {
-		const subredditName = data[i].subreddit;
-		const timeSpent = convertStatToTime(data[i].seconds);
-		const hours = timeSpent.hours;
-		const minutes = timeSpent.minutes;
-		const seconds = timeSpent.seconds;
-
-		subredditEntries[i].innerHTML = subredditName;
-		subredditEntries[i].setAttribute('href', `https://www.reddit.com/r/${subredditName}`);
-
-		if (timeSpent.hours > 0) {
-			timeSpentEntries[i].innerHTML = `${hours}h ${minutes}m ${seconds}s`;
-		} else {
-			timeSpentEntries[i].innerHTML = `${minutes}m ${seconds}s`;
-		}
-	}
-}
-
-function constructViewsTable(data) {
-	const tableHeading = document.getElementsByClassName('table-heading-metric')[0];
-	const subredditEntries = document.getElementsByClassName('subreddit-name');
-	const viewsEntries = document.getElementsByClassName('subreddit-metric');
-	tableHeading.innerHTML = 'Views';
-	for (let i = 0; i < subredditEntries.length; i++) {
-		const subredditName = data[i].subreddit;
-		const views = data[i].views;
-		subredditEntries[i].innerHTML = subredditName;
-		subredditEntries[i].setAttribute('href', `https://www.reddit.com/r/${subredditName}`);
-		viewsEntries[i].innerHTML = views;
-	}
-}
-
 function clearChart() {
 	d3.selectAll('svg > *').remove();
+}
+
+function constructTable(metrics, currentTab) {
+	const tableHeading = document.getElementsByClassName('table-heading-metric')[0];
+	const subredditEntries = document.getElementsByClassName('subreddit-name');
+	const metricEntries = document.getElementsByClassName('subreddit-metric');
+	tableHeading.innerHTML = currentTab === 'VIEWS' ? 'Views' : 'Time';
+	for (let i = 0; i < subredditEntries.length; i++) {
+		const subredditName = metrics[i].subreddit;
+		subredditEntries[i].innerHTML = subredditName;
+		subredditEntries[i].setAttribute('href', `https://www.reddit.com/r/${subredditName}`);
+		if (currentTab === 'VIEWS') {
+			const views = metrics[i].views;
+			metricEntries[i].innerHTML = views;
+		} else {
+			const timeSpent = convertStatToTime(metrics[i].seconds);
+			hours = timeSpent.hours;
+			minutes = timeSpent.minutes;
+			seconds = timeSpent.seconds;
+			metricEntries[i].innerHTML = timeSpent.hours > 0 ?
+				`${hours}h ${minutes}m ${seconds}s` :
+				`${minutes}m ${seconds}s`;
+		}
+	}
 }
 
 function render(currentTab) {
 	clearChart();
 	const metrics = getMetrics();
 	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
+	constructTable(topFiveMetrics, currentTab);
 	if (currentTab === 'TIME_SPENT') {
 		constructTimeSpentGraph(topFiveMetrics);
 		constructTimeSpentTable(topFiveMetrics);
@@ -233,6 +221,5 @@ function changeTab(event) {
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
 	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
-
 	render('TIME_SPENT');
 });
