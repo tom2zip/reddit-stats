@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Webpage Tracker",
-  "description": "Tracks webpages",
+  "name": "Reddit Stats",
+  "description": "Stats for your Reddit experience",
   "version": "1.0",
 
   "browser_action": {
@@ -13,6 +13,16 @@
   "background": {
     "scripts": ["background.js"]
   },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "http://www.reddit.com/*",
+        "https://www.reddit.com/*"
+      ],
+      "js": ["script.js"]
+    }
+  ],
 
   "options_page": "options.html",
 
