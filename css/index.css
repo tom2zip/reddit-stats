@@ -1,0 +1,60 @@
+html, body {
+	height: 100%;
+}
+
+.nav-tabs {
+	padding: 0px 10px;
+	margin-bottom: 20px;
+}
+
+.container {
+	height: 100%;
+	width: 100%;
+	padding: 0px;
+}
+
+#top-bar {
+	height: 45px;
+	border-bottom: 1px solid rgb(95, 153, 207);
+	text-align: center;
+	font-family: 'Raleway', sans-serif;
+	font-size: 30px;
+	background-color: rgb(240, 240, 240);
+}
+
+#main-content {
+	height: calc(100% - 65px);
+	margin-top: 20px;
+	font-family: 'Raleway', sans-serif;
+}
+
+.panel.panel-primary {
+	box-shadow: 0px 5px 5px rgb(220, 220, 200);
+	border-color: rgb(206, 227, 248);
+}
+
+.panel-title {
+	font-weight: bold;
+}
+
+.panel>.panel-heading {
+	background-color: rgb(206, 227, 248);
+	border-color: rgb(206, 227, 248);
+	color: rgb(51, 102, 153);
+}
+
+.panel-title {
+	font-weight: bold;
+}
+.table-heading-rankings {
+	width: 10%;
+}
+
+.table-heading-subreddit {
+	width: 50%;
+}
+
+.table-heading-time,
+.table-heading-views {
+	width: 40%;
+}

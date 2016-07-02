@@ -89,7 +89,6 @@ function resetTimerAndSetStatsIfRedditUrl(url) {
 		if (currSubreddit !== getSubredditFromUrl(url)) {
 			setStats(currSubreddit, timer.getSeconds());
 			currSubreddit = getSubredditFromUrl(url);
-			// console.log(currSubreddit);
 			timer.reset();
 		}
 	} else {
