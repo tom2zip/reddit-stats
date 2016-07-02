@@ -14,5 +14,9 @@
     	"guard-for-in": "off",
     	"no-restricted-syntax": "off",
         "no-param-reassign": "off"
+    },
+    "globals": {
+        "d3": false,
+        "chrome": false
     }
 }
