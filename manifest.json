@@ -14,16 +14,6 @@
     "scripts": ["background.js"]
   },
 
-  "content_scripts": [
-    {
-      "matches": [
-        "http://www.reddit.com/*",
-        "https://www.reddit.com/*"
-      ],
-      "js": ["script.js"]
-    }
-  ],
-
   "options_page": "options.html",
 
   "permissions": [
