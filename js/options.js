@@ -52,60 +52,18 @@ function getTopFiveMetrics(metrics, currentTab) {
 	return topFive;
 }
 
-function constructChart(metrics, currentTab) {
-	const subreddits = metrics.map(metric => metric.subreddit);
-	const measuredMetricArr = currentTab === 'VIEWS' ?
-		metrics.map(metric => metric.views) :
-		metrics.map(metric => metric.seconds);
-
-	const width = 700;
-	const barHeight = 20;
-	const height = 5 * barHeight + 100;
-
-	const xScale = d3.scale.linear()
-		.domain([0, d3.max(measuredMetricArr)])
-		.range([0, 500]);
-
-	const yScale = d3.scale.linear()
-		.domain([0, 5])
-		.range([0, height]);
-
-	const yAxis = d3.svg.axis();
-	yAxis.orient('left')
-		.scale(yScale)
-		.tickSize(0)
-		.tickFormat((d, i) => subreddits[i])
-		.tickValues(d3.range(5));
-
+function constructPlot(dataset) {
 	const chart = d3.select('#chart')
-		.attr('width', width)
-		.attr('height', height);
+		.attr('width', 700)
+		.attr('height', 400);
 
-	const bar = chart.selectAll('g')
-		.data(measuredMetricArr)
+	chart.selectAll('circle')
+		.data(dataset)
 		.enter()
-			.append('g')
-			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
-
-	bar.append('rect')
-		.attr('width', 0)
-		.attr('height', barHeight - 1)
-		.attr('fill', 'orangered')
-		.on('mouseover', function() {
-			d3.select(this).attr('fill', 'lightsalmon');
-		})
-		.on('mouseout', function() {
-			d3.select(this).attr('fill', 'orangered');
-		})
-		.transition()
-			.duration(500)
-			.delay((d, i) => i * 100)
-			.attr('width', d => xScale(d));
-
-	chart.append('g')
-		.attr('transform', 'translate(130, 20)')
-		.attr('id', 'yaxis')
-		.call(yAxis);
+		.append('circle')
+		.attr('cx', d => d[0])
+		.attr('cy', d => d[1])
+		.attr('r', 5);
 }
 
 function constructTable(metrics, currentTab) {
@@ -136,24 +94,24 @@ function clearChart() {
 	d3.selectAll('svg > *').remove();
 }
 
+function processLocalStorage() {
+	const metricArr = [];
+	for (const key in localStorage) {
+		metricArr.push(JSON.parse(localStorage[key]));
+	}
+	const metricDataset = metricArr.map(metric => [metric.seconds, metric.views]);
+	return metricDataset;
+}
+
 function render(currentTab) {
 	clearChart();
 	const metrics = getMetrics();
 	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
-	constructChart(topFiveMetrics, currentTab);
+	const metricDataset = processLocalStorage();
+	constructPlot(metricDataset);
 	constructTable(topFiveMetrics, currentTab);
 }
 
-function changeTab(event) {
-	if (event.target.innerHTML === 'Time Spent') {
-		render('TIME_SPENT');
-	} else if (event.target.innerHTML === 'Views') {
-		render('VIEWS');
-	}
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
-	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
 	render('TIME_SPENT');
 });

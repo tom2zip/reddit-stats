@@ -16,70 +16,61 @@
 	<div class='container'>
 		<div id='top-bar'>Reddit Stats</div>
 		<div id='main-content'>
-			<ul class="nav nav-tabs">
-				<li role="presentation" class="active"><a id='timespent-tab-heading' href="#tab-content" role="tab" data-toggle="tab">Time Spent</a></li>
-				<li role="presentation"><a id='views-tab-heading' href="#time-spent-tab" role="tab" data-toggle="tab">Views</a></li>
-			</ul>
-			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="tab-content">
-					<div class='col-lg-6'>
-						<div class='panel panel-primary'>
-							<div class='panel-heading'>
-								<h1 class='panel-title'>Top 5 Subreddits</h1>
-							</div>
-							<div class='panel-body'>
-								<svg id='chart'></svg>
-							</div>
-						</div>
+			<div class='col-lg-6'>
+				<div class='panel panel-primary'>
+					<div class='panel-heading'>
+						<h1 class='panel-title'>Time Spent vs Views</h1>
 					</div>
-					<div class='col-lg-6'>
-						<div class='panel panel-primary'>
-							<div class='panel-heading'>
-								<h1 class='panel-title'>Top 5 Subreddits</h1>
-							</div>
-							<div id='table-holder' class='panel-body'>
-								<table class='table table-hover'>
-									<thead>
-										<tr>
-											<th class='table-heading-rankings'>#</th>
-											<th class='table-heading-subreddit'>Subreddit</th>
-											<th class='table-heading-metric'>Time</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>1</td>
-											<td><a class='subreddit-name'></a></td>
-											<td class='subreddit-metric'></td>
-										</tr>
-										<tr>
-											<td>2</td>
-											<td><a class='subreddit-name'></a></td>
-											<td class='subreddit-metric'></td>
-										</tr>
-										<tr>
-											<td>3</td>
-											<td><a class='subreddit-name'></a></td>
-											<td class='subreddit-metric'></td>
-										</tr>
-										<tr>
-											<td>4</td>
-											<td><a class='subreddit-name'></a></td>
-											<td class='subreddit-metric'></td>
-										</tr>
-										<tr>
-											<td>5</td>
-											<td><a class='subreddit-name'></a></td>
-											<td class='subreddit-metric'></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
-						</div>
+					<div class='panel-body'>
+						<svg id='chart'></svg>
 					</div>
 				</div>
-			</div>			
+			</div>
+			<div class='col-lg-6'>
+				<div class='panel panel-primary'>
+					<div class='panel-heading'>
+						<h1 class='panel-title'>Top 5 Subreddits</h1>
+					</div>
+					<div id='table-holder' class='panel-body'>
+						<table class='table table-hover'>
+							<thead>
+								<tr>
+									<th class='table-heading-rankings'>#</th>
+									<th class='table-heading-subreddit'>Subreddit</th>
+									<th class='table-heading-metric'>Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td><a class='subreddit-name'></a></td>
+									<td class='subreddit-metric'></td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td><a class='subreddit-name'></a></td>
+									<td class='subreddit-metric'></td>
+								</tr>
+								<tr>
+									<td>3</td>
+									<td><a class='subreddit-name'></a></td>
+									<td class='subreddit-metric'></td>
+								</tr>
+								<tr>
+									<td>4</td>
+									<td><a class='subreddit-name'></a></td>
+									<td class='subreddit-metric'></td>
+								</tr>
+								<tr>
+									<td>5</td>
+									<td><a class='subreddit-name'></a></td>
+									<td class='subreddit-metric'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
