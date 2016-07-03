@@ -90,11 +90,12 @@ function constructChart(metrics, currentTab) {
 	const tooltip = d3.select('body')
 		.append('div')
 		.style('position', 'absolute')
-		.style('border', '1px solid')
+		.style('background', 'rgba(0, 0, 0, 0.8)')
+		.style('text-align', 'center')
+		.style('color', 'white')
 		.style('height', '25px')
 		.style('width', '100px')
-		.style('visibility', 'hidden')
-		.text('a simple tooltip');
+		.style('visibility', 'hidden');
 
 	bar.append('rect')
 		.attr('width', 0)
@@ -104,9 +105,21 @@ function constructChart(metrics, currentTab) {
 			d3.select(this).attr('fill', 'lightsalmon');
 			tooltip.style('visibility', 'visible');
 		})
-		.on('mousemove', () =>
-			tooltip.style('top', `${event.pageY - 30}px`).style('left', `${event.pageX - 50}px`)
-		)
+		.on('mousemove', (d) => {
+			tooltip.style('top', `${event.pageY - 30}px`).style('left', `${event.pageX - 50}px`);
+			if (currentTab === 'VIEWS') {
+				tooltip.text(`${d} views`);
+			} else {
+				const timeSpent = convertStatToTime(d);
+				const hours = timeSpent.hours;
+				const minutes = timeSpent.minutes;
+				const seconds = timeSpent.seconds;
+				const displayTime = timeSpent.hours > 0 ?
+					`${hours}h ${minutes}m ${seconds}s` :
+					`${minutes}m ${seconds}s`;
+				tooltip.text(displayTime);
+			}
+		})
 		.on('mouseout', function() {
 			d3.select(this).attr('fill', 'orangered');
 			tooltip.style('visibility', 'hidden');
