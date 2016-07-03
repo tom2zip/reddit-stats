@@ -154,8 +154,13 @@ function changeTab(event) {
 	}
 }
 
+function goToOptions() {
+	window.open(chrome.extension.getURL('options.html'));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
 	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
+	document.getElementById('options-link').addEventListener('click', goToOptions);
 	render('TIME_SPENT');
 });

@@ -28,6 +28,18 @@ html, body {
 	font-family: 'Raleway', sans-serif;
 }
 
+#main-content .more-info {
+	text-align: center;
+}
+
+#main-content .more-info p {
+	display: inline;
+}
+
+#main-content .more-info a {
+	cursor: pointer;
+}
+
 .panel.panel-primary {
 	box-shadow: 0px 5px 5px rgb(220, 220, 200);
 	border-color: rgb(206, 227, 248);
