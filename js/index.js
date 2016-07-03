@@ -87,15 +87,29 @@ function constructChart(metrics, currentTab) {
 			.append('g')
 			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
 
+	const tooltip = d3.select('body')
+		.append('div')
+		.style('position', 'absolute')
+		.style('border', '1px solid')
+		.style('height', '25px')
+		.style('width', '100px')
+		.style('visibility', 'hidden')
+		.text('a simple tooltip');
+
 	bar.append('rect')
 		.attr('width', 0)
 		.attr('height', barHeight - 1)
 		.attr('fill', 'orangered')
 		.on('mouseover', function() {
 			d3.select(this).attr('fill', 'lightsalmon');
+			tooltip.style('visibility', 'visible');
 		})
+		.on('mousemove', () =>
+			tooltip.style('top', `${event.pageY - 30}px`).style('left', `${event.pageX - 50}px`)
+		)
 		.on('mouseout', function() {
 			d3.select(this).attr('fill', 'orangered');
+			tooltip.style('visibility', 'hidden');
 		})
 		.transition()
 			.duration(500)
@@ -127,44 +141,8 @@ function changeTab(event) {
 	}
 }
 
-function getCurrentTabUrl(callback) {
-	const queryInfo = {
-		active: true,
-		currentWindow: true,
-	};
-
-	chrome.tabs.query(queryInfo, tabs => {
-		const tab = tabs[0];
-		const url = tab.url;
-		callback(url);
-	});
-}
-
-function isRedditUrl(url) {
-	return url.indexOf('reddit') !== -1;
-}
-
-function getSubredditFromUrl(url) {
-	const splitUrl = url.split('/');
-	if (splitUrl[3] === 'r') {
-		const subredditName = splitUrl[4];
-		if (subredditName.indexOf('#') > -1) {
-			return subredditName.split('#')[0];
-		}
-		return subredditName;
-	}
-	return 'everything else';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
 	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
 	render('TIME_SPENT');
-	getCurrentTabUrl(url => {
-		const content = document.getElementById('content');
-		if (isRedditUrl(url)) {
-			const currSubreddit = getSubredditFromUrl(url);
-			content.innerHTML = `Current subreddit: ${currSubreddit}`;	
-		}
-	});
 });
