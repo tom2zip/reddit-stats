@@ -11,17 +11,31 @@ function convertStatToTime(stat) {
 }
 
 function constructPlot(dataset) {
+	const WIDTH = 700;
+	const HEIGHT = 400;
+
+	const xValues = dataset.map(data => data[0]);
+	const yValues = dataset.map(data => data[1]);
+
+	const xScale = d3.scale.linear()
+		.domain([0, d3.max(xValues)])
+		.range([0, WIDTH]);
+
+	const yScale = d3.scale.linear()
+		.domain([0, d3.max(yValues)])
+		.range([HEIGHT, 0]);
+
 	const chart = d3.select('#chart')
-		.attr('width', 700)
-		.attr('height', 400);
+		.attr('width', WIDTH)
+		.attr('height', HEIGHT);
 
 	chart.selectAll('circle')
 		.data(dataset)
 		.enter()
 		.append('circle')
-		.attr('cx', d => d[0])
-		.attr('cy', d => d[1])
-		.attr('r', 5);
+		.attr('cx', d => xScale(d[0]))
+		.attr('cy', d => yScale(d[1]))
+		.attr('r', 3.5);
 }
 
 function addRow(subreddit, seconds, views) {

@@ -2,11 +2,6 @@ html, body {
 	height: 100%;
 }
 
-.nav-tabs {
-	padding: 0px 10px;
-	margin-bottom: 20px;
-}
-
 .container {
 	height: 100%;
 	width: 100%;
@@ -46,15 +41,12 @@ html, body {
 .panel-title {
 	font-weight: bold;
 }
-.table-heading-rankings {
-	width: 10%;
-}
 
-.table-heading-subreddit {
-	width: 50%;
-}
-
-.table-heading-time,
-.table-heading-views {
+#table-holder .table-heading-subreddit {
 	width: 40%;
+}
+
+#table-holder .table-heading-time,
+#table-holder .table-heading-views {
+	width: 30%;
 }
