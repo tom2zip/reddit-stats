@@ -29,13 +29,33 @@ function constructPlot(dataset) {
 		.attr('width', WIDTH)
 		.attr('height', HEIGHT);
 
+	const tooltip = d3.select('body').append('div')
+		.attr('class', 'tooltip')
+		.style('opacity', 0);
+
 	chart.selectAll('circle')
 		.data(dataset)
 		.enter()
 		.append('circle')
 		.attr('cx', d => xScale(d[0]))
 		.attr('cy', d => yScale(d[1]))
-		.attr('r', 3.5);
+		.attr('r', 5)
+		.attr('fill', 'orangered')
+		.on('mouseover', function(d) {
+			d3.select(this).attr('fill', 'lightsalmon');
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', 0.9);
+			tooltip.html(`(${d[0]}, ${d[1]})`)
+				.style('left', `${d3.event.pageX + 5}px`)
+				.style('top', `${d3.event.pageY - 28}px`);
+		})
+		.on('mouseout', function() {
+			d3.select(this).attr('fill', 'orangered');
+			tooltip.transition()
+				.duration(500)
+				.style('opacity', 0);
+		});
 }
 
 function addRow(subreddit, seconds, views) {

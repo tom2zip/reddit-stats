@@ -50,3 +50,10 @@ html, body {
 #table-holder .table-heading-views {
 	width: 30%;
 }
+
+.tooltip {
+	position: absolute;
+	width: 200px;
+	height: 28px;
+	pointer-events: none;
+}
