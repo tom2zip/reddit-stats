@@ -10,17 +10,20 @@ function convertStatToTime(stat) {
 	};
 }
 
+// data[0]: subreddit
+// data[1]: time spent
+// data[2]: views
 function constructPlot(dataset) {
 	const width = 800;
 	const height = 400;
 	const padding = 20;
 
 	const xScale = d3.scale.linear()
-		.domain([0, d3.max(dataset, d => d[0])])
+		.domain([0, d3.max(dataset, d => d[1])])
 		.range([padding + 5, width - padding]);
 
 	const yScale = d3.scale.linear()
-		.domain([0, d3.max(dataset, d => d[1])])
+		.domain([0, d3.max(dataset, d => d[2])])
 		.range([height - padding, padding]);
 
 	const xAxis = d3.svg.axis().scale(xScale).orient('bottom');
@@ -58,8 +61,8 @@ function constructPlot(dataset) {
 		.data(dataset)
 		.enter()
 		.append('circle')
-		.attr('cx', d => xScale(d[0]))
-		.attr('cy', d => yScale(d[1]))
+		.attr('cx', d => xScale(d[1]))
+		.attr('cy', d => yScale(d[2]))
 		.attr('r', 5)
 		.attr('fill', 'orangered')
 		.on('mouseover', function(d) {
@@ -67,7 +70,7 @@ function constructPlot(dataset) {
 			tooltip.transition()
 				.duration(200)
 				.style('opacity', 0.9);
-			tooltip.html(`(${d[0]}, ${d[1]})`)
+			tooltip.html(`${d[0]}: (${d[1]}, ${d[2]})`)
 				.style('left', `${d3.event.pageX + 5}px`)
 				.style('top', `${d3.event.pageY - 28}px`);
 		})
@@ -110,16 +113,16 @@ function constructTable(metrics) {
 	});
 }
 
-function clearChart() {
-	d3.selectAll('svg > *').remove();
-}
-
 function processLocalStorageForPlot() {
+	const subredditNames = [];
 	const metricArr = [];
 	for (const key in localStorage) {
+		subredditNames.push(key);
 		metricArr.push(JSON.parse(localStorage[key]));
 	}
-	const metricDataset = metricArr.map(metric => [metric.seconds, metric.views]);
+	const metricDataset = metricArr.map((metric, index) =>
+		[subredditNames[index], metric.seconds, metric.views]
+	);
 	return metricDataset;
 }
 
@@ -137,7 +140,6 @@ function processLocalStorageForTable() {
 }
 
 function render() {
-	clearChart();
 	const metricDataset = processLocalStorageForPlot();
 	const metricDataTable = processLocalStorageForTable();
 	constructPlot(metricDataset);
@@ -145,5 +147,5 @@ function render() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	render('TIME_SPENT');
+	render();
 });
