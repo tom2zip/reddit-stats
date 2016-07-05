@@ -11,50 +11,48 @@ function convertStatToTime(stat) {
 }
 
 function constructPlot(dataset) {
-	const WIDTH = 700;
-	const HEIGHT = 400;
-
-	const xValues = dataset.map(data => data[0]);
-	const yValues = dataset.map(data => data[1]);
+	const width = 800;
+	const height = 400;
+	const padding = 20;
 
 	const xScale = d3.scale.linear()
-		.domain([0, d3.max(xValues)])
-		.range([0, WIDTH]);
+		.domain([0, d3.max(dataset, d => d[0])])
+		.range([padding + 5, width - padding]);
 
 	const yScale = d3.scale.linear()
-		.domain([0, d3.max(yValues)])
-		.range([HEIGHT, 0]);
+		.domain([0, d3.max(dataset, d => d[1])])
+		.range([height - padding, padding]);
 
 	const xAxis = d3.svg.axis().scale(xScale).orient('bottom');
 	const yAxis = d3.svg.axis().scale(yScale).orient('left');
 
+	const tooltip = d3.select('body').append('div')
+		.attr('class', 'tooltip')
+		.style('opacity', 0);
+
 	const chart = d3.select('#chart')
-		.attr('width', WIDTH)
-		.attr('height', HEIGHT);
+		.attr('width', width)
+		.attr('height', height);
 
 	chart.append('g')
 		.attr('class', 'axis')
-		.attr('transform', `translate(0, ${HEIGHT - 20})`)
+		.attr('transform', `translate(0, ${height - padding})`)
 		.call(xAxis)
 		.append('text')
-			.attr('x', WIDTH)
+			.attr('x', width)
 			.attr('y', -6)
 			.style('text-anchor', 'end')
 			.text('Time Spent (seconds)');
 
 	chart.append('g')
 		.attr('class', 'axis')
-		.attr('transform', 'translate(25, 0)')
+		.attr('transform', `translate(${padding + 5}, 0)`)
 		.call(yAxis)
 		.append('text')
 			.attr('transform', 'rotate(-90)')
 			.attr('y', 14)
 			.style('text-anchor', 'end')
 			.text('Views');
-
-	const tooltip = d3.select('body').append('div')
-		.attr('class', 'tooltip')
-		.style('opacity', 0);
 
 	chart.selectAll('circle')
 		.data(dataset)
