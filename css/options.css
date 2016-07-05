@@ -57,3 +57,14 @@ html, body {
 	height: 28px;
 	pointer-events: none;
 }
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	font-size: 12px;
+}

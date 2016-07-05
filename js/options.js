@@ -25,9 +25,32 @@ function constructPlot(dataset) {
 		.domain([0, d3.max(yValues)])
 		.range([HEIGHT, 0]);
 
+	const xAxis = d3.svg.axis().scale(xScale).orient('bottom');
+	const yAxis = d3.svg.axis().scale(yScale).orient('left');
+
 	const chart = d3.select('#chart')
 		.attr('width', WIDTH)
 		.attr('height', HEIGHT);
+
+	chart.append('g')
+		.attr('class', 'axis')
+		.attr('transform', `translate(0, ${HEIGHT - 20})`)
+		.call(xAxis)
+		.append('text')
+			.attr('x', WIDTH)
+			.attr('y', -6)
+			.style('text-anchor', 'end')
+			.text('Time Spent (seconds)');
+
+	chart.append('g')
+		.attr('class', 'axis')
+		.attr('transform', 'translate(25, 0)')
+		.call(yAxis)
+		.append('text')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 14)
+			.style('text-anchor', 'end')
+			.text('Views');
 
 	const tooltip = d3.select('body').append('div')
 		.attr('class', 'tooltip')
