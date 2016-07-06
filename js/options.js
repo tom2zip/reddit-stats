@@ -10,6 +10,15 @@ function convertStatToTime(stat) {
 	};
 }
 
+function getDisplayTime(timeSpent) {
+	const hours = timeSpent.hours;
+	const minutes = timeSpent.minutes;
+	const seconds = timeSpent.seconds;
+	return hours > 0 ?
+		`${hours}h ${minutes}m ${seconds}s` :
+		`${minutes}m ${seconds}s`;
+}
+
 // data[0]: subreddit
 // data[1]: time spent
 // data[2]: views
@@ -70,7 +79,10 @@ function constructPlot(dataset) {
 			tooltip.transition()
 				.duration(200)
 				.style('opacity', 0.9);
-			tooltip.html(`${d[0]}: (${d[1]}, ${d[2]})`)
+			tooltip.html(() => {
+				const displayTime = getDisplayTime(convertStatToTime(d[1]));
+				return `<strong>${d[0]}</strong>: (${displayTime}, ${d[2]} views)`;
+			})
 				.style('left', `${d3.event.pageX + 5}px`)
 				.style('top', `${d3.event.pageY - 28}px`);
 		})
@@ -92,13 +104,7 @@ function addRow(subreddit, seconds, views) {
 	const viewsCell = newRow.insertCell(2);
 
 	const subredditText = document.createTextNode(subreddit);
-	const timeSpent = convertStatToTime(seconds);
-	const hours = timeSpent.hours;
-	const minutes = timeSpent.minutes;
-	const timeSpentSeconds = timeSpent.seconds;
-	const displayTime = timeSpent.hours > 0 ?
-		`${hours}h ${minutes}m ${timeSpentSeconds}s` :
-		`${minutes}m ${timeSpentSeconds}s`;
+	const displayTime = getDisplayTime(convertStatToTime(seconds));
 	const secondsText = document.createTextNode(displayTime);
 	const viewsText = document.createTextNode(views);
 
