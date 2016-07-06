@@ -62,7 +62,7 @@ function getSubredditFromUrl(url) {
 		}
 		return subredditName;
 	}
-	return 'everything else';
+	return '';
 }
 
 function setStats(subreddit, seconds) {
@@ -86,7 +86,8 @@ function setStats(subreddit, seconds) {
 
 function resetTimerAndSetStatsIfRedditUrl(url) {
 	if (isRedditUrl(url)) {
-		if (currSubreddit !== getSubredditFromUrl(url)) {
+		const newSubreddit = getSubredditFromUrl(url);
+		if (newSubreddit !== '' && currSubreddit !== newSubreddit) {
 			setStats(currSubreddit, timer.getSeconds());
 			currSubreddit = getSubredditFromUrl(url);
 			timer.reset();
@@ -104,7 +105,11 @@ chrome.tabs.onActivated.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.status === 'complete') {
-		resetTimerAndSetStatsIfRedditUrl(tab.url);
+		getCurrentTabUrl(url => {
+			if (url === tab.url) {
+				resetTimerAndSetStatsIfRedditUrl(tab.url);
+			}
+		});
 	}
 });
 
