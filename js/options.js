@@ -24,11 +24,10 @@ const height = 400;
 const padding = 20;
 let plot;
 
-function createBasePlot() {
-	const plot = d3.select('#plot')
+function setBasePlot() {
+	plot = d3.select('#plot')
 		.attr('width', width)
 		.attr('height', height);
-	return plot;
 }
 
 function setXScale(dataset) {
@@ -111,7 +110,7 @@ function drawDots(dataset, xScale, yScale, tooltip) {
 }
 
 function constructPlot(dataset) {
-	plot = createBasePlot();
+	setBasePlot();
 	const xScale = setXScale(dataset);
 	const yScale = setYScale(dataset);
 	createXAxis(xScale);
