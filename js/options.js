@@ -19,34 +19,35 @@ function getDisplayTime(timeSpent) {
 		`${minutes}m ${seconds}s`;
 }
 
-// data[0]: subreddit
-// data[1]: time spent
-// data[2]: views
-function constructPlot(dataset) {
-	const width = 800;
-	const height = 400;
-	const padding = 20;
+const width = 800;
+const height = 400;
+const padding = 20;
+let plot;
 
+function createBasePlot() {
+	const plot = d3.select('#plot')
+		.attr('width', width)
+		.attr('height', height);
+	return plot;
+}
+
+function setXScale(dataset) {
 	const xScale = d3.scale.linear()
 		.domain([0, d3.max(dataset, d => d[1])])
 		.range([padding + 5, width - padding]);
+	return xScale;
+}
 
+function setYScale(dataset) {
 	const yScale = d3.scale.linear()
 		.domain([0, d3.max(dataset, d => d[2])])
 		.range([height - padding, padding]);
+	return yScale;
+}
 
+function createXAxis(xScale) {
 	const xAxis = d3.svg.axis().scale(xScale).orient('bottom');
-	const yAxis = d3.svg.axis().scale(yScale).orient('left');
-
-	const tooltip = d3.select('body').append('div')
-		.attr('class', 'tooltip')
-		.style('opacity', 0);
-
-	const chart = d3.select('#chart')
-		.attr('width', width)
-		.attr('height', height);
-
-	chart.append('g')
+	plot.append('g')
 		.attr('class', 'axis')
 		.attr('transform', `translate(0, ${height - padding})`)
 		.call(xAxis)
@@ -55,8 +56,11 @@ function constructPlot(dataset) {
 			.attr('y', -6)
 			.style('text-anchor', 'end')
 			.text('Time Spent (seconds)');
+}
 
-	chart.append('g')
+function createYAxis(yScale) {
+	const yAxis = d3.svg.axis().scale(yScale).orient('left');
+	plot.append('g')
 		.attr('class', 'axis')
 		.attr('transform', `translate(${padding + 5}, 0)`)
 		.call(yAxis)
@@ -65,8 +69,20 @@ function constructPlot(dataset) {
 			.attr('y', 14)
 			.style('text-anchor', 'end')
 			.text('Views');
+}
 
-	chart.selectAll('circle')
+function createToolTip() {
+	const tooltip = d3.select('body').append('div')
+		.attr('class', 'tooltip')
+		.style('opacity', 0);
+	return tooltip;
+}
+
+// data[0]: subreddit
+// data[1]: time spent
+// data[2]: views
+function drawDots(dataset, xScale, yScale, tooltip) {
+	plot.selectAll('circle')
 		.data(dataset)
 		.enter()
 		.append('circle')
@@ -92,6 +108,16 @@ function constructPlot(dataset) {
 				.duration(500)
 				.style('opacity', 0);
 		});
+}
+
+function constructPlot(dataset) {
+	plot = createBasePlot();
+	const xScale = setXScale(dataset);
+	const yScale = setYScale(dataset);
+	createXAxis(xScale);
+	createYAxis(yScale);
+	const tooltip = createToolTip();
+	drawDots(dataset, xScale, yScale, tooltip);
 }
 
 function addRow(subreddit, seconds, views) {
