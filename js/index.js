@@ -52,41 +52,48 @@ function getTopFiveMetrics(metrics, currentTab) {
 	return topFive;
 }
 
-function constructChart(metrics, currentTab) {
-	const subreddits = metrics.map(metric => metric.subreddit);
-	const measuredMetricArr = currentTab === 'VIEWS' ?
-		metrics.map(metric => metric.views) :
-		metrics.map(metric => metric.seconds);
+const width = 700;
+const barHeight = 20;
+const height = 5 * barHeight + 100;
+let chart;
 
-	const width = 700;
-	const barHeight = 20;
-	const height = 5 * barHeight + 100;
+function createBaseChart() {
+	chart = d3.select('#chart')
+		.attr('width', width)
+		.attr('height', height);
+}
 
+function setXScale(data) {
 	const xScale = d3.scale.linear()
-		.domain([0, d3.max(measuredMetricArr)])
+		.domain([0, d3.max(data)])
 		.range([0, 500]);
+	return xScale;
+}
 
+function setYScale() {
 	const yScale = d3.scale.linear()
 		.domain([0, 5])
 		.range([0, height]);
+	return yScale;
+}
 
+function createYAxisElements(yScale, subreddits) {
 	const yAxis = d3.svg.axis();
 	yAxis.orient('left')
 		.scale(yScale)
 		.tickSize(0)
 		.tickFormat((d, i) => subreddits[i])
 		.tickValues(d3.range(5));
+	return yAxis;
+}
 
-	const chart = d3.select('#chart')
-		.attr('width', width)
-		.attr('height', height);
+function drawYAxis(yAxis) {
+	chart.append('g')
+		.attr('transform', 'translate(130, 20)')
+		.call(yAxis);
+}
 
-	const bar = chart.selectAll('g')
-		.data(measuredMetricArr)
-		.enter()
-			.append('g')
-			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
-
+function createToolTip() {
 	const tooltip = d3.select('body')
 		.append('div')
 		.style('position', 'absolute')
@@ -96,6 +103,15 @@ function constructChart(metrics, currentTab) {
 		.style('height', '25px')
 		.style('width', '100px')
 		.style('visibility', 'hidden');
+	return tooltip;
+}
+
+function drawBars(data, currentTab, tooltip, xScale) {
+	const bar = chart.selectAll('g')
+		.data(data)
+		.enter()
+			.append('g')
+			.attr('transform', (d, i) => `translate(135, ${10 + i * (barHeight + 20)})`);
 
 	bar.append('rect')
 		.attr('width', 0)
@@ -128,11 +144,21 @@ function constructChart(metrics, currentTab) {
 			.duration(500)
 			.delay((d, i) => i * 100)
 			.attr('width', d => xScale(d));
+}
 
-	chart.append('g')
-		.attr('transform', 'translate(130, 20)')
-		.attr('id', 'yaxis')
-		.call(yAxis);
+function constructChart(metrics, currentTab) {
+	const subreddits = metrics.map(metric => metric.subreddit);
+	const measuredMetricArr = currentTab === 'VIEWS' ?
+		metrics.map(metric => metric.views) :
+		metrics.map(metric => metric.seconds);
+
+	createBaseChart();
+	const xScale = setXScale(measuredMetricArr);
+	const yScale = setYScale();
+	const yAxis = createYAxisElements(yScale, subreddits);
+	const tooltip = createToolTip();
+	drawBars(measuredMetricArr, currentTab, tooltip, xScale);
+	drawYAxis(yAxis);
 }
 
 function clearChart() {
