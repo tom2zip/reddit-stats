@@ -10,6 +10,15 @@ function convertStatToTime(stat) {
 	};
 }
 
+function getDisplayTime(timeSpent) {
+	const hours = timeSpent.hours;
+	const minutes = timeSpent.minutes;
+	const seconds = timeSpent.seconds;
+	return hours > 0 ?
+		`${hours}h ${minutes}m ${seconds}s` :
+		`${minutes}m ${seconds}s`;
+}
+
 function getMetrics() {
 	const metrics = [];
 	for (const key in localStorage) {
@@ -94,15 +103,9 @@ function drawYAxis(yAxis) {
 }
 
 function createToolTip() {
-	const tooltip = d3.select('body')
-		.append('div')
-		.style('position', 'absolute')
-		.style('background', 'rgba(0, 0, 0, 0.8)')
-		.style('text-align', 'center')
-		.style('color', 'white')
-		.style('height', '25px')
-		.style('width', '100px')
-		.style('visibility', 'hidden');
+	const tooltip = d3.select('body').append('div')
+		.attr('class', 'tooltip')
+		.style('opacity', 0);
 	return tooltip;
 }
 
@@ -117,28 +120,29 @@ function drawBars(data, currentTab, tooltip, xScale) {
 		.attr('width', 0)
 		.attr('height', barHeight - 1)
 		.attr('fill', 'orangered')
-		.on('mouseover', function() {
+		.on('mouseover', function(d) {
 			d3.select(this).attr('fill', 'lightsalmon');
-			tooltip.style('visibility', 'visible');
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', 0.9);
+			tooltip.html(() => {
+				if (currentTab === 'TIME_SPENT') {
+					const displayTime = getDisplayTime(convertStatToTime(d));
+					return `<strong>${displayTime}</strong>`;
+				}
+				return `<strong>${d} views</strong>`;
+			})
+				.style('left', `${d3.event.pageX + 5}px`)
+				.style('top', `${d3.event.pageY - 28}px`);
 		})
-		.on('mousemove', (d) => {
+		.on('mousemove', () => {
 			tooltip.style('top', `${event.pageY - 30}px`).style('left', `${event.pageX - 50}px`);
-			if (currentTab === 'VIEWS') {
-				tooltip.text(`${d} views`);
-			} else {
-				const timeSpent = convertStatToTime(d);
-				const hours = timeSpent.hours;
-				const minutes = timeSpent.minutes;
-				const seconds = timeSpent.seconds;
-				const displayTime = timeSpent.hours > 0 ?
-					`${hours}h ${minutes}m ${seconds}s` :
-					`${minutes}m ${seconds}s`;
-				tooltip.text(displayTime);
-			}
 		})
 		.on('mouseout', function() {
 			d3.select(this).attr('fill', 'orangered');
-			tooltip.style('visibility', 'hidden');
+			tooltip.transition()
+				.duration(100)
+				.style('opacity', 0);
 		})
 		.transition()
 			.duration(500)
