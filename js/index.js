@@ -118,36 +118,38 @@ function drawBars(data, currentTab, tooltip, xScale) {
 
 	bar.append('rect')
 		.attr('width', 0)
-		.attr('height', barHeight - 1)
+		.attr('height', barHeight)
 		.attr('fill', 'orangered')
-		.on('mouseover', function(d) {
-			d3.select(this).attr('fill', 'lightsalmon');
-			tooltip.transition()
-				.duration(200)
-				.style('opacity', 0.9);
-			tooltip.html(() => {
-				if (currentTab === 'TIME_SPENT') {
-					const displayTime = getDisplayTime(convertStatToTime(d));
-					return `<strong>${displayTime}</strong>`;
-				}
-				return `<strong>${d} views</strong>`;
-			})
-				.style('left', `${d3.event.pageX + 5}px`)
-				.style('top', `${d3.event.pageY - 28}px`);
-		})
-		.on('mousemove', () => {
-			tooltip.style('top', `${event.pageY - 30}px`).style('left', `${event.pageX - 50}px`);
-		})
-		.on('mouseout', function() {
-			d3.select(this).attr('fill', 'orangered');
-			tooltip.transition()
-				.duration(100)
-				.style('opacity', 0);
+		.transition()
+			.duration(500)
+			.delay((d, i) => i * 100)
+			.attr('width', xScale);
+
+	return bar;
+}
+
+function createBarLabels(data, bars, xScale, yScale, currentTab) {
+	bars.append('text')
+		.data(data)
+		.attr('x', 0)
+		.attr('y', 10)
+		.attr('dx', -5)
+		.attr('dy', '.36em')
+		.attr('opacity', '0')
+		.attr('fill', 'white')
+		.attr('font-weight', 'bold')
+		.attr('text-anchor', 'end')
+		.text(d => {
+			if (currentTab === 'TIME_SPENT') {
+				return getDisplayTime(convertStatToTime(d));
+			}
+			return `${d} views`;
 		})
 		.transition()
 			.duration(500)
 			.delay((d, i) => i * 100)
-			.attr('width', d => xScale(d));
+			.attr('x', xScale)
+			.attr('opacity', '1');
 }
 
 function constructChart(metrics, currentTab) {
@@ -161,7 +163,8 @@ function constructChart(metrics, currentTab) {
 	const yScale = setYScale();
 	const yAxis = createYAxisElements(yScale, subreddits);
 	const tooltip = createToolTip();
-	drawBars(measuredMetricArr, currentTab, tooltip, xScale);
+	const bars = drawBars(measuredMetricArr, currentTab, tooltip, xScale);
+	createBarLabels(measuredMetricArr, bars, xScale, yScale, currentTab);
 	drawYAxis(yAxis);
 }
 
