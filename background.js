@@ -69,16 +69,16 @@ function setStats(subreddit, seconds) {
 	if (!localStorage.getItem(subreddit)) {
 		const newSubredditEntry = {
 			seconds,
-			views: 1,
+			visits: 1,
 		};
 		localStorage.setItem(subreddit, JSON.stringify(newSubredditEntry));
 	} else {
 		const subredditEntry = JSON.parse(localStorage.getItem(subreddit));
 		const timeSpent = subredditEntry.seconds;
-		const numViews = subredditEntry.views;
+		const numVisits = subredditEntry.visits;
 		const newSubredditEntry = {
 			seconds: timeSpent + seconds,
-			views: numViews + 1,
+			visits: numVisits + 1,
 		};
 		localStorage.setItem(subreddit, JSON.stringify(newSubredditEntry));
 	}

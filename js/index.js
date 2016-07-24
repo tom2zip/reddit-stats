@@ -175,8 +175,15 @@ function clearChart() {
 function render(currentTab) {
 	clearChart();
 	const metrics = getMetrics();
-	const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
-	constructChart(topFiveMetrics, currentTab);
+	if (metrics.length < 5) {
+		const errorContainer = document.getElementById('error-container');
+		const chartSvg = document.getElementById('chart');
+		errorContainer.style.display = '';
+		chartSvg.style.display = 'none';
+	} else {
+		const topFiveMetrics = getTopFiveMetrics(metrics, currentTab);
+		constructChart(topFiveMetrics, currentTab);
+	}
 }
 
 function changeTab(event) {

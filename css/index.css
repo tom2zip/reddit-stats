@@ -70,3 +70,14 @@ html, body {
 .table-heading-views {
 	width: 40%;
 }
+
+#error-container {
+	width: 700px;
+	height: 200px;
+	text-align: center;
+}
+
+#error-message {
+	display: inline;
+	line-height: 185px;
+}
