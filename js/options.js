@@ -67,7 +67,7 @@ function createYAxis(yScale) {
 			.attr('transform', 'rotate(-90)')
 			.attr('y', 14)
 			.style('text-anchor', 'end')
-			.text('Views');
+			.text('Visits');
 }
 
 function createToolTip() {
@@ -79,7 +79,7 @@ function createToolTip() {
 
 // data[0]: subreddit
 // data[1]: time spent
-// data[2]: views
+// data[2]: visits
 function drawDots(dataset, xScale, yScale, tooltip) {
 	plot.selectAll('circle')
 		.data(dataset)
@@ -96,7 +96,7 @@ function drawDots(dataset, xScale, yScale, tooltip) {
 				.style('opacity', 0.9);
 			tooltip.html(() => {
 				const displayTime = getDisplayTime(convertStatToTime(d[1]));
-				return `<strong>${d[0]}</strong>: (${displayTime}, ${d[2]} views)`;
+				return `<strong>${d[0]}</strong>: (${displayTime}, ${d[2]} visits)`;
 			})
 				.style('left', `${d3.event.pageX + 5}px`)
 				.style('top', `${d3.event.pageY - 28}px`);
@@ -119,28 +119,28 @@ function constructPlot(dataset) {
 	drawDots(dataset, xScale, yScale, tooltip);
 }
 
-function addRow(subreddit, seconds, views) {
+function addRow(subreddit, seconds, visits) {
 	const metricsTable = document.getElementById('metrics-table-body');
 
 	const newRow = metricsTable.insertRow(metricsTable.childElementCount);
 
 	const subredditCell = newRow.insertCell(0);
 	const secondsCell = newRow.insertCell(1);
-	const viewsCell = newRow.insertCell(2);
+	const visitsCell = newRow.insertCell(2);
 
 	const subredditText = document.createTextNode(subreddit);
 	const displayTime = getDisplayTime(convertStatToTime(seconds));
 	const secondsText = document.createTextNode(displayTime);
-	const viewsText = document.createTextNode(views);
+	const visitsText = document.createTextNode(visits);
 
 	subredditCell.appendChild(subredditText);
 	secondsCell.appendChild(secondsText);
-	viewsCell.appendChild(viewsText);
+	visitsCell.appendChild(visitsText);
 }
 
 function constructTable(metrics) {
 	metrics.forEach(metric => {
-		addRow(metric.subreddit, metric.seconds, metric.views);
+		addRow(metric.subreddit, metric.seconds, metric.visits);
 	});
 }
 
@@ -152,7 +152,7 @@ function processLocalStorageForPlot() {
 		metricArr.push(JSON.parse(localStorage[key]));
 	}
 	const metricDataset = metricArr.map((metric, index) =>
-		[subredditNames[index], metric.seconds, metric.views]
+		[subredditNames[index], metric.seconds, metric.visits]
 	);
 	return metricDataset;
 }
@@ -163,8 +163,8 @@ function processLocalStorageForTable() {
 		const nameObj = {
 			subreddit: key,
 		};
-		const timeAndViews = JSON.parse(localStorage[key]);
-		const metric = Object.assign(nameObj, timeAndViews);
+		const timeAndVisits = JSON.parse(localStorage[key]);
+		const metric = Object.assign(nameObj, timeAndVisits);
 		metrics.push(metric);
 	}
 	return metrics;
