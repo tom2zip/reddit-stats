@@ -25,8 +25,8 @@ function getMetrics() {
 		const nameObj = {
 			subreddit: key,
 		};
-		const timeAndViews = JSON.parse(localStorage[key]);
-		const metric = Object.assign(nameObj, timeAndViews);
+		const timeAndVisits = JSON.parse(localStorage[key]);
+		const metric = Object.assign(nameObj, timeAndVisits);
 		metrics.push(metric);
 	}
 	return metrics;
@@ -143,7 +143,7 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 			if (currentTab === 'TIME_SPENT') {
 				return getDisplayTime(convertStatToTime(d));
 			}
-			return `${d} views`;
+			return `${d} visits`;
 		})
 		.transition()
 			.duration(500)
@@ -154,7 +154,7 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 
 function constructChart(metrics, currentTab) {
 	const subreddits = metrics.map(metric => metric.subreddit);
-	const measuredMetricArr = currentTab === 'VIEWS' ?
+	const measuredMetricArr = currentTab === 'VISITS' ?
 		metrics.map(metric => metric.views) :
 		metrics.map(metric => metric.seconds);
 
@@ -182,8 +182,8 @@ function render(currentTab) {
 function changeTab(event) {
 	if (event.target.innerHTML === 'Time Spent') {
 		render('TIME_SPENT');
-	} else if (event.target.innerHTML === 'Views') {
-		render('VIEWS');
+	} else if (event.target.innerHTML === 'Visits') {
+		render('VISITS');
 	}
 }
 
@@ -193,7 +193,7 @@ function goToOptions() {
 
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('timespent-tab-heading').addEventListener('click', changeTab);
-	document.getElementById('views-tab-heading').addEventListener('click', changeTab);
+	document.getElementById('visits-tab-heading').addEventListener('click', changeTab);
 	document.getElementById('options-link').addEventListener('click', goToOptions);
 	render('TIME_SPENT');
 });
