@@ -1,4 +1,4 @@
-let currSubreddit = '';
+let currSubreddit;
 let timer = {};
 
 const initTimer = function() {
@@ -87,7 +87,10 @@ function setStats(subreddit, seconds) {
 function resetTimerAndSetStatsIfRedditUrl(url) {
 	if (isRedditUrl(url)) {
 		const newSubreddit = getSubredditFromUrl(url);
-		if (newSubreddit !== '' && currSubreddit !== newSubreddit) {
+		if (currSubreddit === undefined) {
+			currSubreddit = newSubreddit;
+			timer.reset();
+		} else if (newSubreddit !== '' && currSubreddit !== newSubreddit) {
 			setStats(currSubreddit, timer.getSeconds());
 			currSubreddit = getSubredditFromUrl(url);
 			timer.reset();
