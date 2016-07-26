@@ -36,7 +36,7 @@ function getTopFiveMetrics(metrics, currentTab) {
 	const topFive = [];
 	const measuredMetricArr = currentTab === 'TIME_SPENT' ?
 		metrics.map(metric => metric.seconds) :
-		metrics.map(metric => metric.views);
+		metrics.map(metric => metric.visits);
 
 	let i = 0;
 	while (i < 5) {
@@ -155,7 +155,7 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 function constructChart(metrics, currentTab) {
 	const subreddits = metrics.map(metric => metric.subreddit);
 	const measuredMetricArr = currentTab === 'VISITS' ?
-		metrics.map(metric => metric.views) :
+		metrics.map(metric => metric.visits) :
 		metrics.map(metric => metric.seconds);
 
 	createBaseChart();
