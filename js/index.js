@@ -136,7 +136,7 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 		.attr('dx', -5)
 		.attr('dy', '.36em')
 		.attr('opacity', '0')
-		.attr('fill', 'white')
+		.attr('fill', xScale > 200 ? 'white' : '')
 		.attr('font-weight', 'bold')
 		.attr('text-anchor', 'end')
 		.text(d => {
@@ -148,7 +148,12 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 		.transition()
 			.duration(500)
 			.delay((d, i) => i * 100)
-			.attr('x', xScale)
+			.attr('x', d => {
+				if (xScale(d) > 200) {
+					return xScale(d);
+				}
+				return xScale(d) + 55;
+			})
 			.attr('opacity', '1');
 }
 
