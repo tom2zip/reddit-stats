@@ -19,8 +19,8 @@ function getDisplayTime(timeSpent) {
 		`${minutes}m ${seconds}s`;
 }
 
-const width = 800;
-const height = 400;
+let width = 800;
+let height = 400;
 const padding = 20;
 let plot;
 
@@ -179,4 +179,17 @@ function render() {
 
 document.addEventListener('DOMContentLoaded', () => {
 	render();
+});
+
+window.addEventListener('resize', () => {
+	d3.select('svg').selectAll('*').remove();
+	if (window.innerWidth < 992) {
+		width = 600;
+		height = 300;
+		render();
+	} else {
+		width = 800;
+		height = 400;
+		render();
+	}
 });

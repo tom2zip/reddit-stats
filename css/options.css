@@ -9,7 +9,6 @@ html, body {
 	text-align: center;
 	font-family: 'Raleway', sans-serif;
 	font-size: 30px;
-	background-color: rgb(240, 240, 240);
 }
 
 #main-content {
@@ -57,6 +56,11 @@ html, body {
 	height: 28px;
 	pointer-events: none;
 	background: white;
+}
+
+#plot {
+	display: block;
+	margin: auto;
 }
 
 .axis path,
