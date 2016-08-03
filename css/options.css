@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	overflow: hidden;
 }
 
 .container {
@@ -40,6 +41,11 @@ html, body {
 
 .panel-title {
 	font-weight: bold;
+}
+
+#table-holder {
+	height: 340px;
+	overflow-y: scroll;
 }
 
 #table-holder .table-heading-subreddit {
