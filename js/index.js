@@ -75,7 +75,7 @@ function createBaseChart() {
 function setXScale(data) {
 	const xScale = d3.scale.linear()
 		.domain([0, d3.max(data)])
-		.range([0, 500]);
+		.range([0, 480]);
 	return xScale;
 }
 
@@ -149,10 +149,8 @@ function createBarLabels(data, bars, xScale, yScale, currentTab) {
 			.duration(500)
 			.delay((d, i) => i * 100)
 			.attr('x', d => {
-				if (xScale(d) > 200) {
-					return xScale(d);
-				}
-				return xScale(d) + 55;
+				const labelOffset = d < 3600 ? 60 : 80;
+				return xScale(d) + labelOffset;
 			})
 			.attr('opacity', '1');
 }
