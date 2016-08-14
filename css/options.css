@@ -50,6 +50,23 @@ html, body {
 	width: 30%;
 }
 
+#table-holder::-webkit-scrollbar {
+	width: 12px;
+}
+
+#table-holder::-webkit-scrollbar-track {
+	background-color: #eaeaea;
+	border-left: 1px solid #ccc;
+}
+
+#table-holder::-webkit-scrollbar-thumb {
+	background-color: #ccc;
+}
+
+#table-holder::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
+
 .tooltip {
 	position: absolute;
 	width: 200px;
