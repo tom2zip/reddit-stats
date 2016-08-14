@@ -77,9 +77,11 @@ function createToolTip() {
 	return tooltip;
 }
 
-// data[0]: subreddit
-// data[1]: time spent
-// data[2]: visits
+const smallDotSize = 5;
+const bigDotSize = 10;
+const unhighlightedDotColour = 'lightsalmon';
+const highlightedDotColour = 'orangered';
+
 function drawDots(dataset, xScale, yScale, tooltip) {
 	plot.selectAll('circle')
 		.data(dataset)
@@ -88,9 +90,9 @@ function drawDots(dataset, xScale, yScale, tooltip) {
 		.attr('cx', d => xScale(d[1]))
 		.attr('cy', d => yScale(d[2]))
 		.attr('r', 5)
-		.attr('fill', 'orangered')
+		.attr('fill', highlightedDotColour)
 		.on('mouseover', function(d) {
-			d3.select(this).attr('fill', 'lightsalmon');
+			d3.select(this).attr('r', bigDotSize);
 			tooltip.transition()
 				.duration(200)
 				.style('opacity', 0.9);
@@ -102,7 +104,7 @@ function drawDots(dataset, xScale, yScale, tooltip) {
 				.style('top', `${d3.event.pageY - 28}px`);
 		})
 		.on('mouseout', function() {
-			d3.select(this).attr('fill', 'orangered');
+			d3.select(this).attr('r', smallDotSize);
 			tooltip.transition()
 				.duration(500)
 				.style('opacity', 0);
@@ -119,28 +121,6 @@ function constructPlot(dataset) {
 	drawDots(dataset, xScale, yScale, tooltip);
 }
 
-function addRow(subreddit, seconds, visits) {
-	const metricsTable = document.getElementById('metrics-table-body');
-
-	const newRow = metricsTable.insertRow(metricsTable.childElementCount);
-	newRow.addEventListener('mouseover', () => {
-		console.log('hello');
-	});
-
-	const subredditCell = newRow.insertCell(0);
-	const secondsCell = newRow.insertCell(1);
-	const visitsCell = newRow.insertCell(2);
-
-	const subredditText = document.createTextNode(subreddit);
-	const displayTime = getDisplayTime(convertStatToTime(seconds));
-	const secondsText = document.createTextNode(displayTime);
-	const visitsText = document.createTextNode(visits);
-
-	subredditCell.appendChild(subredditText);
-	secondsCell.appendChild(secondsText);
-	visitsCell.appendChild(visitsText);
-}
-
 function constructTable(metrics) {
 	// add rows
 	d3.select('#metrics-table-body')
@@ -148,7 +128,25 @@ function constructTable(metrics) {
 		.data(metrics)
 		.enter()
 		.append('tr')
-		.attr('class', 'data-row');
+		.attr('class', 'data-row')
+		.on('mouseover', (d, rowIndex) => {
+			const dots = d3.selectAll('circle')[0];
+			dots.forEach((dot, dotIndex) => {
+				if (rowIndex !== dotIndex) {
+					d3.select(dots[dotIndex]).attr('fill', unhighlightedDotColour);
+				} else if (rowIndex === dotIndex) {
+					d3.select(dots[dotIndex]).attr('r', bigDotSize);
+				}
+			});
+		})
+		.on('mouseout', () => {
+			const dots = d3.selectAll('circle')[0];
+			dots.forEach(dot => {
+				d3.select(dot)
+					.attr('fill', highlightedDotColour)
+					.attr('r', smallDotSize);
+			});
+		});
 
 	// add table data
 	d3.selectAll('#metrics-table-body .data-row')
@@ -170,19 +168,6 @@ function processLocalStorageForPlot() {
 		[subredditNames[index], metric.seconds, metric.visits]
 	);
 	return metricDataset;
-}
-
-function processLocalStorageForTable() {
-	const metrics = [];
-	for (const key in localStorage) {
-		const nameObj = {
-			subreddit: key,
-		};
-		const timeAndVisits = JSON.parse(localStorage[key]);
-		const metric = Object.assign(nameObj, timeAndVisits);
-		metrics.push(metric);
-	}
-	return metrics;
 }
 
 function render() {
