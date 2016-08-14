@@ -19,9 +19,9 @@ function getDisplayTime(timeSpent) {
 		`${minutes}m ${seconds}s`;
 }
 
-let width = 800;
-let height = 400;
-const padding = 20;
+let width = 1150;
+let height = 800;
+const padding = 30;
 let plot;
 
 function createBasePlot() {
@@ -123,6 +123,9 @@ function addRow(subreddit, seconds, visits) {
 	const metricsTable = document.getElementById('metrics-table-body');
 
 	const newRow = metricsTable.insertRow(metricsTable.childElementCount);
+	newRow.addEventListener('mouseover', () => {
+		console.log('hello');
+	});
 
 	const subredditCell = newRow.insertCell(0);
 	const secondsCell = newRow.insertCell(1);
@@ -139,9 +142,21 @@ function addRow(subreddit, seconds, visits) {
 }
 
 function constructTable(metrics) {
-	metrics.forEach(metric => {
-		addRow(metric.subreddit, metric.seconds, metric.visits);
-	});
+	// add rows
+	d3.select('#metrics-table-body')
+		.selectAll('.data-row')
+		.data(metrics)
+		.enter()
+		.append('tr')
+		.attr('class', 'data-row');
+
+	// add table data
+	d3.selectAll('#metrics-table-body .data-row')
+		.selectAll('td')
+		.data(row => row)
+		.enter()
+			.append('td')
+			.html(d => d);
 }
 
 function processLocalStorageForPlot() {
@@ -172,24 +187,23 @@ function processLocalStorageForTable() {
 
 function render() {
 	const metricDataset = processLocalStorageForPlot();
-	const metricDataTable = processLocalStorageForTable();
 	constructPlot(metricDataset);
-	constructTable(metricDataTable);
+	constructTable(metricDataset);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
 	render();
 });
 
-window.addEventListener('resize', () => {
-	d3.select('svg').selectAll('*').remove();
-	if (window.innerWidth < 992) {
-		width = 600;
-		height = 300;
-		render();
-	} else {
-		width = 800;
-		height = 400;
-		render();
-	}
-});
+// window.addEventListener('resize', () => {
+// 	d3.select('svg').selectAll('*').remove();
+// 	if (window.innerWidth < 992) {
+// 		width = 600;
+// 		height = 300;
+// 		render();
+// 	} else {
+// 		width = 800;
+// 		height = 400;
+// 		render();
+// 	}
+// });
