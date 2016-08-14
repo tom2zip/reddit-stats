@@ -100,8 +100,8 @@ function drawDots(dataset, xScale, yScale, tooltip) {
 				const displayTime = getDisplayTime(convertStatToTime(d[1]));
 				return `<strong>${d[0]}</strong>: (${displayTime}, ${d[2]} visits)`;
 			})
-				.style('left', `${d3.event.pageX + 5}px`)
-				.style('top', `${d3.event.pageY - 28}px`);
+				.style('left', `${d3.event.pageX - 80}px`)
+				.style('top', `${d3.event.pageY - 40}px`);
 		})
 		.on('mouseout', function() {
 			d3.select(this).attr('r', smallDotSize);
