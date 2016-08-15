@@ -122,6 +122,26 @@ function constructPlot(dataset) {
 }
 
 function constructTable(metrics) {
+	this.highlightDot = (rowIndex) => {
+		const dots = d3.selectAll('circle')[0];
+		dots.forEach((dot, dotIndex) => {
+			if (rowIndex !== dotIndex) {
+				d3.select(dots[dotIndex]).attr('fill', unhighlightedDotColour);
+			} else if (rowIndex === dotIndex) {
+				d3.select(dots[dotIndex]).attr('r', bigDotSize);
+			}
+		});
+	};
+
+	this.unhighlightDots = () => {
+		const dots = d3.selectAll('circle')[0];
+		dots.forEach(dot => {
+			d3.select(dot)
+				.attr('fill', highlightedDotColour)
+				.attr('r', smallDotSize);
+		});
+	};
+
 	// add rows
 	d3.select('#metrics-table-body')
 		.selectAll('.data-row')
@@ -129,24 +149,8 @@ function constructTable(metrics) {
 		.enter()
 		.append('tr')
 		.attr('class', 'data-row')
-		.on('mouseover', (d, rowIndex) => {
-			const dots = d3.selectAll('circle')[0];
-			dots.forEach((dot, dotIndex) => {
-				if (rowIndex !== dotIndex) {
-					d3.select(dots[dotIndex]).attr('fill', unhighlightedDotColour);
-				} else if (rowIndex === dotIndex) {
-					d3.select(dots[dotIndex]).attr('r', bigDotSize);
-				}
-			});
-		})
-		.on('mouseout', () => {
-			const dots = d3.selectAll('circle')[0];
-			dots.forEach(dot => {
-				d3.select(dot)
-					.attr('fill', highlightedDotColour)
-					.attr('r', smallDotSize);
-			});
-		});
+		.on('mouseover', (d, rowIndex) => { this.highlightDot(rowIndex); })
+		.on('mouseout', () => { this.unhighlightDots(); });
 
 	// add table data
 	d3.selectAll('#metrics-table-body .data-row')
