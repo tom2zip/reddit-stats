@@ -51,20 +51,21 @@ html, body {
 }
 
 #table-holder::-webkit-scrollbar {
-	width: 12px;
+	width: 10px;
 }
 
 #table-holder::-webkit-scrollbar-track {
-	background-color: #eaeaea;
-	border-left: 1px solid #ccc;
+	background-color: rgb(234, 234, 234);
+	border-left: 1px rgb(204, 204, 204);
 }
 
 #table-holder::-webkit-scrollbar-thumb {
-	background-color: #ccc;
+	background-color: rgb(204, 204, 204);
+	border-radius: 20px;
 }
 
 #table-holder::-webkit-scrollbar-thumb:hover {
-  background-color: #aaa;
+	background-color: rgb(170, 170, 170);
 }
 
 .tooltip {
