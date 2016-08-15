@@ -180,19 +180,23 @@ function render() {
 	constructTable(metricDataset);
 }
 
+function rerender() {
+	d3.select('svg').selectAll('*').remove();
+	render();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	render();
 });
 
-// window.addEventListener('resize', () => {
-// 	d3.select('svg').selectAll('*').remove();
-// 	if (window.innerWidth < 992) {
-// 		width = 600;
-// 		height = 300;
-// 		render();
-// 	} else {
-// 		width = 800;
-// 		height = 400;
-// 		render();
-// 	}
-// });
+window.addEventListener('resize', () => {
+	if (window.innerWidth < 1200) {
+		width = 650;
+		height = 450;
+		rerender();
+	} else {
+		width = 1150;
+		height = 800;
+		rerender();
+	}
+});
