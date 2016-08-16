@@ -186,6 +186,13 @@ function rerender() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	if (window.innerWidth < 1200) {
+		width = 650;
+		height = 450;
+	} else {
+		width = 1150;
+		height = 800;
+	}
 	render();
 });
 
@@ -193,10 +200,9 @@ window.addEventListener('resize', () => {
 	if (window.innerWidth < 1200) {
 		width = 650;
 		height = 450;
-		rerender();
 	} else {
 		width = 1150;
 		height = 800;
-		rerender();
 	}
+	rerender();
 });

@@ -111,14 +111,14 @@ function enterSubreddit(nextSubreddit) {
 		const entryToUpdate = getEntryToUpdate(currSubreddit);
 		const updatedEntry = updateTime(entryToUpdate);
 		console.log(`update time for ${currSubreddit}:`, updatedEntry);
-		localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));	
+		localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
 	}
 
 	if (lastVisitedSubreddit !== nextSubreddit) {
 		const entryToUpdate = getEntryToUpdate(nextSubreddit);
 		const updatedEntry = updateVisits(entryToUpdate);
 		console.log(`update visits for ${nextSubreddit}:`, updatedEntry);
-		localStorage.setItem(nextSubreddit, JSON.stringify(updatedEntry));	
+		localStorage.setItem(nextSubreddit, JSON.stringify(updatedEntry));
 	}
 
 	currSubreddit = nextSubreddit;
@@ -151,7 +151,7 @@ function enterOrExit(url) {
 
 chrome.tabs.onActivated.addListener(() => {
 	getCurrentTabUrl(url => {
-		console.log(`onActivated url: ${url}`);
+		console.log(`active tab change: ${url}`);
 		enterOrExit(url);
 	});
 });
@@ -159,7 +159,7 @@ chrome.tabs.onActivated.addListener(() => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.status === 'complete') {
 		getCurrentTabUrl(url => {
-			console.log(`onUpdated url: ${url}`);
+			console.log(`same tab changed url: ${url}`);
 			if (url === tab.url) {
 				enterOrExit(url);
 			}
@@ -169,7 +169,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 chrome.windows.onFocusChanged.addListener(() => {
 	getCurrentTabUrl(url => {
-		console.log(`onFocusChanged url: ${url}`);
+		console.log(`active window change: ${url}`);
 		if (isSubredditUrl(url)) {
 			enterOrExit(url);
 		}
