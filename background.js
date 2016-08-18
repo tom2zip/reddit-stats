@@ -46,9 +46,6 @@ function getCurrentTabUrl(callback) {
 	});
 }
 
-let currSubreddit = '';
-let lastVisitedSubreddit = '';
-
 // TODO: might need more robust way
 function isRedditUrl(url) {
 	return url.indexOf('reddit') > -1;
@@ -104,52 +101,51 @@ function updateVisits(entry) {
 	return updatedEntry;
 }
 
+let currSubreddit = '';
+
 function enterSubreddit(nextSubreddit) {
-	console.log(`enter: ${nextSubreddit} from: ${currSubreddit}`);
+	console.log(`enter: ${nextSubreddit}`);
 
-	if (currSubreddit !== '') {
-		const entryToUpdate = getEntryToUpdate(currSubreddit);
-		const updatedEntry = updateTime(entryToUpdate);
-		console.log(`update time for ${currSubreddit}:`, updatedEntry);
-		localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
-	}
-
-	if (lastVisitedSubreddit !== nextSubreddit) {
-		const entryToUpdate = getEntryToUpdate(nextSubreddit);
-		const updatedEntry = updateVisits(entryToUpdate);
-		console.log(`update visits for ${nextSubreddit}:`, updatedEntry);
-		localStorage.setItem(nextSubreddit, JSON.stringify(updatedEntry));
-	}
-
-	currSubreddit = nextSubreddit;
+	const entryToUpdate = getEntryToUpdate(currSubreddit);
+	const updatedEntry = updateVisits(entryToUpdate);
+	console.log(`update visits for ${currSubreddit}:`, updatedEntry);
+	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
 	timer.reset();
 }
 
 function exitSubreddit() {
-	console.log(`exiting reddit, last visited: ${currSubreddit}`);
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateTime(entryToUpdate);
-	console.log(`update time for ${currSubreddit}:`, updatedEntry);
+	console.log(`exiting ${currSubreddit}`, updatedEntry);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
-	lastVisitedSubreddit = currSubreddit;
 	currSubreddit = '';
 	timer.stop();
 }
 
 function enterOrExit(url) {
-	if (isRedditUrl(url)) {
-		if (isSubredditUrl(url)) {
-			const nextSubreddit = getSubredditFromUrl(url);
+	const lowerCaseUrl = url.toLowerCase();
+
+	if (isSubredditUrl(lowerCaseUrl)) {
+		const nextSubreddit = getSubredditFromUrl(lowerCaseUrl);
+
+		if (currSubreddit === '') {
+			// new reddit session
+			currSubreddit = nextSubreddit;
 			enterSubreddit(nextSubreddit);
 		} else {
-			exitSubreddit();
+			// leave to another subreddit
+			currSubreddit = nextSubreddit;
 		}
-	} else if (currSubreddit !== '') {
-		exitSubreddit();
+	} else {
+		// leave to different site
+		currSubreddit = '';
 	}
 }
 
 chrome.tabs.onActivated.addListener(() => {
+	if (currSubreddit) {
+		exitSubreddit();
+	}
 	getCurrentTabUrl(url => {
 		console.log(`active tab change: ${url}`);
 		enterOrExit(url);
@@ -158,6 +154,10 @@ chrome.tabs.onActivated.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.status === 'complete') {
+		if (currSubreddit) {
+			exitSubreddit();
+		}
+
 		getCurrentTabUrl(url => {
 			console.log(`same tab changed url: ${url}`);
 			if (url === tab.url) {
@@ -167,11 +167,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
-chrome.windows.onFocusChanged.addListener(() => {
-	getCurrentTabUrl(url => {
-		console.log(`active window change: ${url}`);
-		if (isSubredditUrl(url)) {
-			enterOrExit(url);
-		}
-	});
-});
+// chrome.windows.onFocusChanged.addListener(() => {
+// 	getCurrentTabUrl(url => {
+// 		console.log(`active window change: ${url}`);
+// 		if (isSubredditUrl(url)) {
+// 			enterOrExit(url);
+// 		}
+// 	});
+// });
