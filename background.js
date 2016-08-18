@@ -167,11 +167,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
-// chrome.windows.onFocusChanged.addListener(() => {
-// 	getCurrentTabUrl(url => {
-// 		console.log(`active window change: ${url}`);
-// 		if (isSubredditUrl(url)) {
-// 			enterOrExit(url);
-// 		}
-// 	});
-// });
+chrome.windows.onFocusChanged.addListener(() => {
+	if (currSubreddit) {
+		exitSubreddit();
+	}
+	getCurrentTabUrl(url => {
+		console.log(`active window change: ${url}`);
+		if (isSubredditUrl(url)) {
+			enterOrExit(url);
+		}
+	});
+});
