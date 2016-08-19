@@ -11,14 +11,12 @@ const initTimer = function() {
 		},
 
 		reset() {
-			console.log('TIMER RESET');
 			clearInterval(timerObj);
 			seconds = 0;
 			this.start();
 		},
 
 		stop() {
-			console.log('TIMER STOP');
 			clearInterval(timerObj);
 		},
 
@@ -83,32 +81,29 @@ function getEntryToUpdate(fromSubreddit) {
 function updateTime(entry) {
 	const updatedEntry = entry;
 	const seconds = timer.getSeconds();
-	if (Object.keys(entry).length === 0) {
-		updatedEntry.seconds = seconds;
-	} else {
+	if (entry.seconds) {
 		updatedEntry.seconds += seconds;
+	} else {
+		updatedEntry.seconds = seconds;
 	}
 	return updatedEntry;
 }
 
 function updateVisits(entry) {
 	const updatedEntry = entry;
-	if (Object.keys(entry).length === 0) {
-		updatedEntry.visits = 1;
-	} else {
+	if (entry.visits) {
 		updatedEntry.visits++;
+	} else {
+		updatedEntry.visits = 1;
 	}
 	return updatedEntry;
 }
 
 let currSubreddit = '';
 
-function enterSubreddit(nextSubreddit) {
-	console.log(`enter: ${nextSubreddit}`);
-
+function enterSubreddit() {
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateVisits(entryToUpdate);
-	console.log(`update visits for ${currSubreddit}:`, updatedEntry);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
 	timer.reset();
 }
@@ -116,7 +111,6 @@ function enterSubreddit(nextSubreddit) {
 function exitSubreddit() {
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateTime(entryToUpdate);
-	console.log(`exiting ${currSubreddit}`, updatedEntry);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
 	currSubreddit = '';
 	timer.stop();
@@ -147,7 +141,6 @@ chrome.tabs.onActivated.addListener(() => {
 		exitSubreddit();
 	}
 	getCurrentTabUrl(url => {
-		console.log(`active tab change: ${url}`);
 		enterOrExit(url);
 	});
 });
@@ -159,7 +152,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		}
 
 		getCurrentTabUrl(url => {
-			console.log(`same tab changed url: ${url}`);
 			if (url === tab.url) {
 				enterOrExit(url);
 			}
@@ -167,14 +159,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
-chrome.windows.onFocusChanged.addListener(() => {
-	if (currSubreddit) {
-		exitSubreddit();
-	}
-	getCurrentTabUrl(url => {
-		console.log(`active window change: ${url}`);
-		if (isSubredditUrl(url)) {
-			enterOrExit(url);
-		}
-	});
-});
+// chrome.windows.onFocusChanged.addListener(() => {
+// 	if (currSubreddit) {
+// 		exitSubreddit();
+// 	}
+// 	getCurrentTabUrl(url => {
+// 		console.log(`active window change: ${url}`);
+// 		if (isSubredditUrl(url)) {
+// 			enterOrExit(url);
+// 		}
+// 	});
+// });
