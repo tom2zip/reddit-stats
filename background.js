@@ -102,6 +102,7 @@ function updateVisits(entry) {
 let currSubreddit = '';
 
 function enterSubreddit() {
+	console.log('enter:', currSubreddit);
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateVisits(entryToUpdate);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
@@ -109,6 +110,7 @@ function enterSubreddit() {
 }
 
 function exitSubreddit() {
+	console.log('exit:', currSubreddit);
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateTime(entryToUpdate);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
@@ -137,10 +139,13 @@ function enterOrExit(url) {
 }
 
 chrome.tabs.onActivated.addListener(() => {
-	if (currSubreddit) {
-		exitSubreddit();
-	}
 	getCurrentTabUrl(url => {
+		const lowerCaseUrl = url.toLowerCase();
+		const nextSubreddit = getSubredditFromUrl(lowerCaseUrl);
+
+		if (currSubreddit && currSubreddit !== nextSubreddit) {
+			exitSubreddit();
+		}
 		enterOrExit(url);
 	});
 });
