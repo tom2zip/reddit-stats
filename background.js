@@ -152,11 +152,13 @@ chrome.tabs.onActivated.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (changeInfo.status === 'complete') {
-		if (currSubreddit) {
-			exitSubreddit();
-		}
-
 		getCurrentTabUrl(url => {
+			const lowerCaseUrl = url.toLowerCase();
+			const nextSubreddit = getSubredditFromUrl(lowerCaseUrl);
+
+			if (currSubreddit && currSubreddit !== nextSubreddit) {
+				exitSubreddit();
+			}
 			if (url === tab.url) {
 				enterOrExit(url);
 			}
