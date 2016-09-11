@@ -100,12 +100,15 @@ function updateVisits(entry) {
 }
 
 let currSubreddit = '';
+let lastSubreddit = '';
 
 function enterSubreddit() {
 	console.log('enter:', currSubreddit);
-	const entryToUpdate = getEntryToUpdate(currSubreddit);
-	const updatedEntry = updateVisits(entryToUpdate);
-	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
+	if (lastSubreddit !== currSubreddit) {
+		const entryToUpdate = getEntryToUpdate(currSubreddit);
+		const updatedEntry = updateVisits(entryToUpdate);
+		localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
+	}
 	timer.reset();
 }
 
@@ -114,6 +117,7 @@ function exitSubreddit() {
 	const entryToUpdate = getEntryToUpdate(currSubreddit);
 	const updatedEntry = updateTime(entryToUpdate);
 	localStorage.setItem(currSubreddit, JSON.stringify(updatedEntry));
+	lastSubreddit = currSubreddit;
 	currSubreddit = '';
 	timer.stop();
 }
